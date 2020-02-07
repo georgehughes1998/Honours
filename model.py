@@ -32,12 +32,12 @@ class RNN(nn.Module):
 
         output = self.decode(hidden)
 
-        section_output = self.section_decode(hidden)
+        # section_output = self.section_decode(hidden)
 
         output = self.softmax(output)
 #
-        section_output = self.softmax(section_output)
-        return output, section_output
+        # section_output = self.softmax(section_output)
+        return output  # , section_output
 
 
 # For dropout values:

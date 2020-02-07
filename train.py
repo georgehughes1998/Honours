@@ -31,7 +31,7 @@ SAVE_INTERVAL = 20
 EPOCHS = 10
 
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device to use:", device)
 
 

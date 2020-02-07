@@ -30,6 +30,11 @@ SAVE_INTERVAL = 20
 
 EPOCHS = 10
 
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print("Device to use:", device)
+
+
 # Function to run on each line of the dataset to "clean" it
 def clean_function(dataset):
     # List of names in dataset to be appended to/removed
@@ -83,6 +88,7 @@ num_batches = dataset.dataset_size // BATCH_SIZE
 
 # Create an instance of the model
 rnn = RNN(dataset.vocab_size)
+rnn.to(device)
 
 # Load state dict
 try:
@@ -131,8 +137,8 @@ for epoch in range(EPOCHS):
 
         optimiser.zero_grad()
 
-        input = input.permute(1,0)
-        target = target.permute(1, 0)
+        input = input.permute(1,0).to(device)
+        target = target.permute(1, 0).to(device)
 
         output = rnn(input, batch_size=BATCH_SIZE)
         output = output.permute(0, 2, 1)

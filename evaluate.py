@@ -25,7 +25,8 @@ def model_get_probabilities(model, prompt="george"):
 
 
 def model_generate_tree(model, prompt="george", length=5, prob_cutoff_number=2):
-
+    if not isinstance(prompt, list):
+        prompt = prompt.split()
     probabilities = model_get_probabilities(model, prompt=prompt)
 
     # Get the second largest probability
@@ -44,7 +45,7 @@ def model_generate_tree(model, prompt="george", length=5, prob_cutoff_number=2):
     if length > 1:
         leaves = {}
         for c in probabilities:
-            next_probabilities = model_generate_tree(model, prompt=prompt+c, length=length - 1)
+            next_probabilities = model_generate_tree(model, prompt=prompt+[c], length=length - 1)
             node = (probabilities[c], next_probabilities)
             leaves[c] = node
         output = leaves
@@ -57,24 +58,31 @@ def model_generate_tree(model, prompt="george", length=5, prob_cutoff_number=2):
 
 
 # Function to return a generated string from the model
-def generate_text_from_model(model, prompt="george ", length=15, max_prompt_length=15):
+def generate_text_from_model(model, prompt="george", length=15, max_prompt_length=15):
     p = 0
     model.eval()
+    prompt = prompt.split()
     for i in range(length):
         with torch.no_grad():
-            output = model(dataset.get_tensor_from_string(prompt[p:p+max_prompt_length]))
+            input_tensor = dataset.get_tensor_from_string(prompt[p:p+max_prompt_length])
+            output = model(input_tensor)
             # output = output.permute(0, 2, 1)
-            prompt += dataset.ix_to_vocab[torch.argmax(output, dim=2)[-1].item()]
+            prompt += [dataset.ix_to_vocab[torch.argmax(output, dim=2)[-1].item()]]
             p += 1
     model.train()
-    return prompt
+
+    textPrompt = ""
+    for w in prompt:
+        textPrompt += w + ' '
+
+    return textPrompt
 
 
 rnn = RNN(dataset.vocab_size)
 
 # Load state dict
 try:
-    rnn.load_state_dict(torch.load(STATE_DICT_PATH))
+    rnn.load_state_dict(torch.load(STATE_DICT_PATH, map_location=torch.device('cpu')))
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
 except FileNotFoundError:
     print("Failed to load model state.")
@@ -96,7 +104,7 @@ def get_tree_string(tree, substring, probability=1):
         return_value = [(substring, probability)]
     else:
         for c in tree:
-            substrings += get_tree_string(tree[c][1], substring + c, probability*tree[c][0])
+            substrings += get_tree_string(tree[c][1], substring + ' ' + c, probability*tree[c][0])
 
         return_value = substrings
     return return_value
@@ -112,6 +120,6 @@ def print_tree(tree, substring, do_sort=True):
         print(s, "(probability={})".format(p))
 
 rnn.eval()
-prompt = "tru"
-tree = model_generate_tree(rnn, prompt , length=6, prob_cutoff_number=25)
+prompt = "<S> fraser"
+tree = model_generate_tree(rnn, prompt , length=3, prob_cutoff_number=15)
 print_tree(tree, substring=prompt, do_sort=True)

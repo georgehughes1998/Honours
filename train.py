@@ -142,7 +142,7 @@ for epoch in range(EPOCHS):
 
     total_loss = 0
     loss_arr = []
-    c = 0
+    c = 1
 
     for input, target in loader:
 

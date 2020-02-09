@@ -11,12 +11,14 @@ from model import RNN
 from libs.data_manager import DatasetManager
 from project_constants import *
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Device to use:", device)
 
 ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/" + f for f in  ["fb_data_callum.txt","fb_data_zoe.txt","fb_data_fraser.txt"]]
 
-LEARNING_RATE = 10
+LEARNING_RATE = 1
 
 BATCH_SIZE = 64
 
@@ -24,15 +26,11 @@ LOSS_PRECISION = 5
 TRAINING_PROMPTS = ["<S> donald"]
 TRAINING_PROMPT_LENGTH = 3
 
-PRINT_INTERVAL = 1
-GEN_TEXT_INTERVAL = 10
-SAVE_INTERVAL = 20
+PRINT_INTERVAL = 20
+GEN_TEXT_INTERVAL = 50
+SAVE_INTERVAL = 100
 
-EPOCHS = 10
-
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print("Device to use:", device)
+EPOCHS = 100
 
 
 # Function to run on each line of the dataset to "clean" it

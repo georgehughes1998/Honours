@@ -81,8 +81,8 @@ except FileNotFoundError:
     dataset.save()
     print("Saved data set information to {}.".format(DATASET_INFO_PATH))
 
-for i in dataset.get_cleaned_data()[:10]:
-    print(i)
+# for i in dataset.get_cleaned_data()[:10]:
+#     print(i)
 
 # Process the dataset into batches
 dataset_tensors_pairs = [[s[:-1], s[1:]] for s in dataset.get_tensors_data()]

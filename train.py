@@ -177,7 +177,7 @@ for epoch in range(EPOCHS):
             avg_loss = round(mean(loss_arr), LOSS_PRECISION)
             percentage = 100 * c // num_batches
 
-            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}.\t\tLast Generated: {}"
+            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}.\tLast Generated: {}"
             output_string = output_template.format(epoch, percentage, c, num_batches, avg_loss, gen_str)
 
             sys.stdout.write("\r" + output_string)

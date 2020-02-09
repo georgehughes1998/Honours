@@ -18,12 +18,12 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/" + f for f in  ["fb_data_callum.txt","fb_data_zoe.txt","fb_data_fraser.txt"]]
 
-LEARNING_RATE = 1
+LEARNING_RATE = 4
 
 BATCH_SIZE = 64
 
 LOSS_PRECISION = 5
-TRAINING_PROMPTS = ["<S> donald"]
+TRAINING_PROMPTS = ["<S> hi"]
 TRAINING_PROMPT_LENGTH = 3
 
 PRINT_INTERVAL = 1

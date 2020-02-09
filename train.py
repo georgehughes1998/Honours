@@ -16,13 +16,13 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/" + f for f in  ["fb_data_callum.txt","fb_data_zoe.txt","fb_data_fraser.txt"]]
 
-LEARNING_RATE = 0.2
+LEARNING_RATE = 10
 
 BATCH_SIZE = 64
 
 LOSS_PRECISION = 5
-TRAINING_PROMPTS = ["hel"]
-TRAINING_PROMPT_LENGTH = 20
+TRAINING_PROMPTS = ["<S> donald"]
+TRAINING_PROMPT_LENGTH = 3
 
 PRINT_INTERVAL = 1
 GEN_TEXT_INTERVAL = 10
@@ -49,6 +49,9 @@ def clean_function(dataset):
 
     # Filter all non-allowed chars
     dataset = [''.join(filter(lambda c: c in ALLOWED_CHARS, s)) for s in dataset]
+
+    for p in string.punctuation:
+        dataset = [s.replace(p,' {} '.format(p)) for s in dataset]
 
     # Append what a person said to their name + filter long strings
     new_dataset = []
@@ -80,6 +83,9 @@ except FileNotFoundError:
     dataset.save()
     print("Saved data set information to {}.".format(DATASET_INFO_PATH))
 
+for i in dataset.get_cleaned_data()[:10]:
+    print(i)
+
 # Process the dataset into batches
 dataset_tensors_pairs = [[s[:-1], s[1:]] for s in dataset.get_tensors_data()]
 
@@ -100,17 +106,23 @@ print()
 
 
 # Function to return a generated string from the model
-def generate_text_from_model(model, prompt="george ", length=15, max_prompt_length=15):
+def generate_text_from_model(model, prompt="george", length=15, max_prompt_length=15):
     p = 0
     model.eval()
+    prompt = prompt.split()
     for i in range(length):
         with torch.no_grad():
             output = model(dataset.get_tensor_from_string(prompt[p:p+max_prompt_length]))
             # output = output.permute(0, 2, 1)
-            prompt += dataset.ix_to_vocab[torch.argmax(output, dim=2)[-1].item()]
+            prompt += [dataset.ix_to_vocab[torch.argmax(output, dim=2)[-1].item()]]
             p += 1
     model.train()
-    return prompt
+
+    textPrompt = ""
+    for w in prompt:
+        textPrompt += w + ' '
+
+    return textPrompt
 
 
 # Test initial model by generating some strings
@@ -119,7 +131,7 @@ for s in TRAINING_PROMPTS:
 print()
 
 # Train
-criterion = nn.NLLLoss()
+criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
 optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE)
 
 gen_str = generate_text_from_model(rnn)

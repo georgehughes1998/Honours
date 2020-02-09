@@ -36,8 +36,13 @@ class DatasetManager:
         # Path for saving/loading this object to/from
         self._save_path = save_path
 
-        # Character used for padding the dataset
-        self._pad_char = '<PAD>'
+        # Special characters
+        self._start_symbol = '<S>'
+        self._pad_symbol = '<PAD>'
+        self._end_symbol = '</S>'
+
+    def get_cleaned_data(self):
+        return self._cleaned_data
 
     def get_tensors_data(self):
         return self._tensors_data
@@ -80,6 +85,9 @@ class DatasetManager:
         self._convert_data_to_tensors()
         if do_print: print("Converted data into tensors.")
 
+    def get_pad_ix(self):
+        return self.vocab_to_ix[self._pad_symbol]
+
     def _generate_object_dict(self):
         obj_dictionary = dict()
 
@@ -119,25 +127,30 @@ class DatasetManager:
     # Run a given "clean" function on the dataset
     def _clean_data(self):
         self._cleaned_data = self._clean_func(self._raw_dataset)
+        self._cleaned_data = [s.split() for s in self._cleaned_data]
         self.dataset_size = len(self._cleaned_data)
 
     # Gather information about vocab used in the dataset
     def _extract_vocab_from_data(self):
-        vocab = self._pad_char
-        for s in self._cleaned_data:
-            vocab += s
+        vocab = {self._pad_symbol, self._start_symbol, self._end_symbol}
 
-        vocab = set(vocab)
+        for s in self._cleaned_data:
+            for w in s:
+                vocab.add(w)
+
+        # vocab = set(vocab)
         self.vocab = vocab
         self.vocab_size = len(vocab)
 
         self.ix_to_vocab = dict(enumerate(vocab))
         self.vocab_to_ix = {self.ix_to_vocab[x]: x for x in self.ix_to_vocab}
 
-    # Add padding to lines in the data so each line is the same length
+    # Add padding to lines in the data so each line is the same length and add start/end symbols
     def _pad_data(self):
+        self._cleaned_data = [[self._start_symbol] + s + [self._end_symbol] for s in self._cleaned_data]
+
         self.max_sentence_len = max([len(s) for s in self._cleaned_data])
-        self._cleaned_data = [s + self._pad_char * (self.max_sentence_len - len(s)) for s in self._cleaned_data]
+        self._cleaned_data = [s + [self._pad_symbol] * (self.max_sentence_len - len(s)) for s in self._cleaned_data]
 
     # Convert lines in the data to a list of tensors
     def _convert_data_to_tensors(self):

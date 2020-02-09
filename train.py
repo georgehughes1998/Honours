@@ -18,16 +18,16 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/" + f for f in  ["fb_data_callum.txt","fb_data_zoe.txt","fb_data_fraser.txt"]]
 
-LEARNING_RATE = 1
+LEARNING_RATE = 4
 
 BATCH_SIZE = 64
 
 LOSS_PRECISION = 5
-TRAINING_PROMPTS = ["<S> donald"]
+TRAINING_PROMPTS = ["<S> hi"]
 TRAINING_PROMPT_LENGTH = 3
 
-PRINT_INTERVAL = 20
-GEN_TEXT_INTERVAL = 50
+PRINT_INTERVAL = 1
+GEN_TEXT_INTERVAL = 20
 SAVE_INTERVAL = 100
 
 EPOCHS = 100
@@ -177,7 +177,7 @@ for epoch in range(EPOCHS):
             avg_loss = round(mean(loss_arr), LOSS_PRECISION)
             percentage = 100 * c // num_batches
 
-            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}.\t\tLast Generated: {}"
+            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}.\tLast Generated: {}"
             output_string = output_template.format(epoch, percentage, c, num_batches, avg_loss, gen_str)
 
             sys.stdout.write("\r" + output_string)

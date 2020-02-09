@@ -112,7 +112,8 @@ def generate_text_from_model(model, prompt="george", length=15, max_prompt_lengt
     prompt = prompt.split()
     for i in range(length):
         with torch.no_grad():
-            output = model(dataset.get_tensor_from_string(prompt[p:p+max_prompt_length]))
+            input_tensor = dataset.get_tensor_from_string(prompt[p:p+max_prompt_length]).to(device)
+            output = model(input_tensor)
             # output = output.permute(0, 2, 1)
             prompt += [dataset.ix_to_vocab[torch.argmax(output, dim=2)[-1].item()]]
             p += 1

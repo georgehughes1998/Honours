@@ -89,12 +89,14 @@ except FileNotFoundError:
 print()
 
 
-# Test initial model by generating some strings
-for i in range(1):
-    print(generate_text_from_model(rnn, prompt="george hughes", length=40))
-    print(generate_text_from_model(rnn, prompt="zoe hughes", length=40))
-    print(generate_text_from_model(rnn, prompt="callum davies", length=40))
-print()
+# # Test initial model by generating some strings
+# for i in range(1):
+#     print(generate_text_from_model(rnn, prompt="george hughes", length=40))
+#     print(generate_text_from_model(rnn, prompt="zoe hughes", length=40))
+#     print(generate_text_from_model(rnn, prompt="callum davies", length=40))
+# print()
+
+print(generate_text_from_model(rnn, prompt="<S>", length=40))
 
 
 def get_tree_string(tree, substring, probability=1):
@@ -120,6 +122,6 @@ def print_tree(tree, substring, do_sort=True):
         print(s, "(probability={})".format(p))
 
 rnn.eval()
-prompt = "<S> fraser"
-tree = model_generate_tree(rnn, prompt , length=3, prob_cutoff_number=15)
+prompt = "<S>"
+tree = model_generate_tree(rnn, prompt , length=10, prob_cutoff_number=2)
 print_tree(tree, substring=prompt, do_sort=True)

@@ -103,7 +103,7 @@ rnn.to(device)
 
 # Load state dict
 try:
-    rnn.load_state_dict(torch.load(STATE_DICT_PATH))
+    rnn.load_state_dict(torch.load(STATE_DICT_PATH, map_location=device))
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
 except FileNotFoundError:
     print("Failed to load model state.")

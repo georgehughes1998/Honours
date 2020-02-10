@@ -45,7 +45,8 @@ class DatasetManager:
         return self._cleaned_data
 
     def get_tensors_data(self):
-        return self._tensors_data
+        return [self.get_tensor_from_string(s) for s in self._cleaned_data]
+        # return self._tensors_data
 
     def save(self):
         obj_dictionary = self._generate_object_dict()
@@ -64,9 +65,9 @@ class DatasetManager:
         self.max_sentence_len = obj_dictionary['max_sentence_len']
         self.dataset_size = obj_dictionary['dataset_size']
 
-        self._raw_dataset = obj_dictionary['raw_dataset']
+        #self._raw_dataset = obj_dictionary['raw_dataset']
         self._cleaned_data = obj_dictionary['cleaned_data']
-        self._tensors_data = obj_dictionary['tensors_data']
+        #self._tensors_data = obj_dictionary['tensors_data']
 
     # Load and process a dataset
     def load_dataset(self, do_print=False):
@@ -82,8 +83,8 @@ class DatasetManager:
         self._pad_data()
         if do_print: print("Padded data.")
 
-        self._convert_data_to_tensors()
-        if do_print: print("Converted data into tensors.")
+        # self._convert_data_to_tensors()
+        # if do_print: print("Converted data into tensors.")
 
     def get_pad_ix(self):
         return self.vocab_to_ix[self._pad_symbol]
@@ -101,9 +102,9 @@ class DatasetManager:
         obj_dictionary['max_sentence_len'] = self.max_sentence_len
         obj_dictionary['dataset_size'] = self.dataset_size
 
-        obj_dictionary['raw_dataset'] = self._raw_dataset
+        #obj_dictionary['raw_dataset'] = self._raw_dataset
         obj_dictionary['cleaned_data'] = self._cleaned_data
-        obj_dictionary['tensors_data'] = self._tensors_data
+        #obj_dictionary['tensors_data'] = self._tensors_data
 
         return obj_dictionary
 
@@ -152,9 +153,9 @@ class DatasetManager:
         self.max_sentence_len = max([len(s) for s in self._cleaned_data])
         self._cleaned_data = [s + [self._pad_symbol] * (self.max_sentence_len - len(s)) for s in self._cleaned_data]
 
-    # Convert lines in the data to a list of tensors
-    def _convert_data_to_tensors(self):
-        self._tensors_data = [self.get_tensor_from_string(s) for s in self._cleaned_data]
+    # # Convert lines in the data to a list of tensors
+    # def _convert_data_to_tensors(self):
+    #     self._tensors_data = [self.get_tensor_from_string(s) for s in self._cleaned_data]
 
 
 # # Test the class

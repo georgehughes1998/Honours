@@ -87,8 +87,8 @@ except FileNotFoundError:
 
 print("Vocab size:", dataset.vocab_size)
 print("Sentence len:", dataset.max_sentence_len)
-for i in dataset.get_cleaned_data()[:10]:
-    print(i)
+# for i in dataset.get_cleaned_data()[:10]:
+#     print(i)
 print()
 
 # Process the dataset into batches

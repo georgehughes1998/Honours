@@ -38,7 +38,7 @@ class DatasetManager:
 
         # Special characters
         self._start_symbol = '<S>'
-        self._pad_symbol = '<PAD>'
+        self._pad_symbol = '<P>'
         self._end_symbol = '</S>'
 
     def get_cleaned_data(self):

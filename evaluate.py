@@ -124,5 +124,5 @@ def print_tree(tree, substring, do_sort=True):
 
 rnn.eval()
 prompt = "<S>"
-tree = model_generate_tree(rnn, prompt , length=1, prob_cutoff_number=2)
+tree = model_generate_tree(rnn, prompt , length=10, prob_cutoff_number=10)
 print_tree(tree, substring=prompt, do_sort=True)

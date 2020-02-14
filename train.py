@@ -69,6 +69,7 @@ def clean_func(dataset):
     dataset = [s for s in dataset if not s[0] in ['T','M','K']]
     return dataset
 
+
 # Create a dataset manager object to store/load/save info about the dataset
 dataset = DatasetManager(save_path=DATASET_INFO_PATH,
                          data_file_path=DATASET_FILE_PATHS,

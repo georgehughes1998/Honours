@@ -89,6 +89,12 @@ class DatasetManager:
     def get_pad_ix(self):
         return self.vocab_to_ix[self._pad_symbol]
 
+    def get_start_symbol(self):
+        return self._start_symbol
+
+    def get_end_symbol(self):
+        return self._end_symbol
+
     def _generate_object_dict(self):
         obj_dictionary = dict()
 

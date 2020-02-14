@@ -1,5 +1,4 @@
 import torch
-
 import sys
 
 from model import RNN
@@ -31,11 +30,12 @@ except FileNotFoundError:
 print()
 
 
-start_prompt = dataset.get_start_symbol().split()
+start_prompt_string = dataset.get_start_symbol() + " |: A 2"
+start_prompt = start_prompt_string.split()
 length = 40
 
 result = greedy_search(rnn, dataset, start_prompt, length)
-print(result)
+print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
 
 
 # def model_get_probabilities(model, prompt="george"):
@@ -98,11 +98,8 @@ print(result)
 #         text_prompt += w + ' '
 #
 #     return text_prompt
-
-
-
-
-
+#
+#
 # # Test initial model by generating some strings
 # for i in range(1):
 #     print(generate_text_from_model(rnn, prompt="george hughes", length=40))

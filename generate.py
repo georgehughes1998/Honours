@@ -3,9 +3,20 @@ import sys
 
 from model import RNN
 from libs.data_manager import DatasetManager
-from libs.gen import random_sample
+from libs.gen import random_sample, greedy_search
 from abc2midi import write_abc_file, generate_midi_file, generate_ext_file
 from project_constants import *
+
+
+def write_abc(file_name, abc_string):
+    write_abc_file(file_name, abc_string)
+    generate_midi_file(file_name, file_name, do_print=False)
+    generate_ext_file(file_name, file_name, file_extension="png", do_print=False)
+
+
+def remove_symbols(the_string):
+    the_string = the_string.split(end_symbol)[0]
+    return the_string.replace(start_symbol, '')
 
 
 dataset = DatasetManager(save_path=DATASET_INFO_PATH)
@@ -30,24 +41,25 @@ except FileNotFoundError:
     print("Failed to load model state.")
 print()
 
+start_symbol = dataset.get_start_symbol()
+end_symbol = dataset.get_end_symbol()
 
-start_prompt_string = dataset.get_start_symbol() + " |: A 2"
-length = 60
+start_prompt_string = start_symbol + " "
+length = 80
 
-# result = greedy_search(rnn, dataset, start_prompt, length)
-# print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
+result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
+print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
+print()
+write_abc("output/greedy", remove_symbols(result))
 
-for i in range(5):
+NUM_SAMPLE_TO_GENERATE = 1
+for i in range(NUM_SAMPLE_TO_GENERATE):
     result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=i)
 
     print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
     print()
 
-    file_name = "output/sample{}".format(i)
-
-    write_abc_file(file_name, result)
-    generate_midi_file(file_name, file_name, do_print=False)
-    generate_ext_file(file_name, file_name, file_extension="png")
+    write_abc("output/sample{}".format(i), remove_symbols(result))
 
 
 

@@ -3,7 +3,8 @@ import sys
 
 from model import RNN
 from libs.data_manager import DatasetManager
-from libs.gen import greedy_search, random_sample, beam_search
+from libs.gen import random_sample
+from abc2midi import write_abc_file, generate_midi_file, generate_ext_file
 from project_constants import *
 
 
@@ -31,7 +32,7 @@ print()
 
 
 start_prompt_string = dataset.get_start_symbol() + " |: A 2"
-length = 40
+length = 60
 
 # result = greedy_search(rnn, dataset, start_prompt, length)
 # print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
@@ -41,6 +42,13 @@ for i in range(5):
 
     print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
     print()
+
+    file_name = "output/sample{}".format(i)
+
+    write_abc_file(file_name, result)
+    generate_midi_file(file_name, file_name, do_print=False)
+    generate_ext_file(file_name, file_name, file_extension="png")
+
 
 
 # def model_get_probabilities(model, prompt="george"):

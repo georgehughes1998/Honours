@@ -31,11 +31,16 @@ print()
 
 
 start_prompt_string = dataset.get_start_symbol() + " |: A 2"
-start_prompt = start_prompt_string.split()
 length = 40
 
-result = greedy_search(rnn, dataset, start_prompt, length)
-print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
+# result = greedy_search(rnn, dataset, start_prompt, length)
+# print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
+
+for i in range(5):
+    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=i)
+
+    print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
+    print()
 
 
 # def model_get_probabilities(model, prompt="george"):

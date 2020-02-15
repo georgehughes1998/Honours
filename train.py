@@ -16,7 +16,6 @@ print("Device to use:", device)
 
 ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
-# DATASET_FILE_PATHS = ["data/" + f for f in  ["fb_data_callum.txt","fb_data_zoe.txt","fb_data_fraser.txt"]]
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
 LEARNING_RATE = 10
@@ -34,40 +33,14 @@ SAVE_INTERVAL = 100
 EPOCHS = 100
 
 
-# Function to run on each line of the dataset to "clean" it
-# def clean_function(dataset):
-#     # List of names in dataset to be appended to/removed
-#     name_list = ("george hughes", "callum davies", "zoe hughes", "fraser macdonald")
-#
-#     # Filter dates out using regex
-#     date_pattern = "[A-Za-z]{3} [0-9]{1,2}, [0-9]{4}, [0-9]{1,2}:[0-9]{1,2} (AM|PM)"
-#     dataset = list(filter(lambda x: re.match(date_pattern, x) is None, dataset))
-#
-#     # Make all letters lowercase
-#     dataset = [s.lower() for s in dataset]
-#
-#     # Filter all non-allowed chars
-#     dataset = [''.join(filter(lambda c: c in ALLOWED_CHARS, s)) for s in dataset]
-#
-#     for p in string.punctuation:
-#         dataset = [s.replace(p,' {} '.format(p)) for s in dataset]
-#
-#     # Append what a person said to their name + filter long strings
-#     new_dataset = []
-#     for si in range(len(dataset)):
-#         s = dataset[si]
-#         if s in name_list:
-#             s1 = dataset[si + 1]
-#             # Filter out some strings
-#             if 0 < len(s1) < 200:
-#                 new_dataset.append(s1)#(s + ": " + s1)
-#     dataset = new_dataset
-#
-#     return dataset
-def clean_func(dataset):
-    dataset = [s for s in dataset if len(s) > 0]
-    dataset = [s for s in dataset if not s[0] in ['T','M','K']]
-    return dataset
+# Function to run on the dataset lines to "clean" them
+def clean_func(dataset_lines):
+    # Remove lines of length 0
+    dataset_lines = [s for s in dataset_lines if len(s) > 0]
+    # Remove lines which store key, meter or title information
+    dataset_lines = [s for s in dataset_lines if not s[0] in ['T', 'M', 'K']]
+
+    return dataset_lines
 
 
 # Create a dataset manager object to store/load/save info about the dataset

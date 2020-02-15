@@ -31,7 +31,7 @@ class DatasetManager:
         # Stages of processing data
         self._raw_dataset = None
         self._cleaned_data = None
-        self._tensors_data = None
+        # self._tensors_data = None
 
         # Path for saving/loading this object to/from
         self._save_path = save_path
@@ -65,9 +65,9 @@ class DatasetManager:
         self.max_sentence_len = obj_dictionary['max_sentence_len']
         self.dataset_size = obj_dictionary['dataset_size']
 
-        #self._raw_dataset = obj_dictionary['raw_dataset']
+        # self._raw_dataset = obj_dictionary['raw_dataset']
         self._cleaned_data = obj_dictionary['cleaned_data']
-        #self._tensors_data = obj_dictionary['tensors_data']
+        # self._tensors_data = obj_dictionary['tensors_data']
 
     # Load and process a dataset
     def load_dataset(self, do_print=False):
@@ -108,9 +108,9 @@ class DatasetManager:
         obj_dictionary['max_sentence_len'] = self.max_sentence_len
         obj_dictionary['dataset_size'] = self.dataset_size
 
-        #obj_dictionary['raw_dataset'] = self._raw_dataset
+        # obj_dictionary['raw_dataset'] = self._raw_dataset
         obj_dictionary['cleaned_data'] = self._cleaned_data
-        #obj_dictionary['tensors_data'] = self._tensors_data
+        # obj_dictionary['tensors_data'] = self._tensors_data
 
         return obj_dictionary
 

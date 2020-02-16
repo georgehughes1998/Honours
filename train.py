@@ -28,7 +28,7 @@ LOSS_PRECISION = 5
 TRAINING_PROMPTS = ["<S>"]
 TRAINING_PROMPT_LENGTH = 5
 
-PRINT_INTERVAL = 10
+PRINT_INTERVAL = 1
 GEN_TEXT_INTERVAL = 20
 
 
@@ -104,11 +104,11 @@ gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINI
 rnn.train()
 
 
+# Array for tracking average loss of an epoch
+loss_arr = []
+
 # Main training loop
 while True:
-
-    total_loss = 0
-    loss_arr = []
 
     for input, target in loader:
 
@@ -133,6 +133,8 @@ while True:
 
         # List of losses to average
         loss_arr += [loss.item()]
+        if len(loss_arr) > num_batches:
+            loss_arr = loss_arr[num_batches//10:]
         avg_loss = round(mean(loss_arr), LOSS_PRECISION)
 
         # Generate some text using the model
@@ -159,8 +161,6 @@ while True:
 
             sys.stdout.write("\r" + output_string)
             sys.stdout.flush()
-
-            total_loss = 0
 
         # Count epochs and batches
         batch += 1

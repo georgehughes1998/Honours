@@ -7,7 +7,8 @@ from numpy.random import choice, seed
 # Returns either the word or a probability distribution of the vocabulary
 def predict_next_word(model, dataset, prompt, return_ix=False, return_distribution=False, device=None):
     # Run the model
-    output = model(dataset.get_tensor_from_string(prompt).to(device))
+    input = dataset.get_tensor_from_string(prompt).to(device)
+    output = model(input)
 
     # Return a probability distribution for the vocabulary
     if return_distribution:
@@ -40,7 +41,7 @@ def greedy_search(model, dataset, prompt, number_to_generate, return_as_string=T
 
     with torch.no_grad():
         for w in range(number_to_generate):
-            next_word = predict_next_word(model, dataset, result_list)
+            next_word = predict_next_word(model, dataset, result_list, device=device)
             result_list += [next_word]
 
     # Return as a string

@@ -1,7 +1,7 @@
 import torch
 import sys
 
-from model import RNN
+from model import RNN, save_state_dict, load_state_dict
 from libs.data_manager import DatasetManager
 from libs.gen import random_sample, greedy_search
 from abc2midi import write_abc_file, generate_midi_file, generate_ext_file
@@ -19,6 +19,10 @@ def remove_symbols(the_string):
     return the_string.replace(start_symbol, '')
 
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Device to use:", device)
+print()
+
 dataset = DatasetManager(save_path=DATASET_INFO_PATH)
 
 try:
@@ -35,8 +39,12 @@ rnn.eval()
 
 # Load state dict
 try:
-    rnn.load_state_dict(torch.load(STATE_DICT_PATH, map_location=torch.device('cpu')))
+    state_dict, epoch, batch, best_loss = load_state_dict(device)
+    rnn.load_state_dict(state_dict)
+
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
+    print("Loaded model at epoch {}, batch {}.".format(epoch, batch))
+    print("Best recorded loss was {}.".format(best_loss))
 except FileNotFoundError:
     print("Failed to load model state.")
 print()
@@ -45,14 +53,14 @@ start_symbol = dataset.get_start_symbol()
 end_symbol = dataset.get_end_symbol()
 
 start_prompt_string = start_symbol + " "
-length = 80
+length = 200
 
 result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
 print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
 print()
 write_abc("output/greedy", remove_symbols(result))
 
-NUM_SAMPLE_TO_GENERATE = 1
+NUM_SAMPLE_TO_GENERATE = 4
 for i in range(NUM_SAMPLE_TO_GENERATE):
     result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=i)
 

@@ -20,15 +20,17 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
-LEARNING_RATE = 30
+LEARNING_RATE = 0.1
 
 BATCH_SIZE = 32
+
+SAVE_LOSS_MIN = 675
 
 LOSS_PRECISION = 5
 TRAINING_PROMPTS = ["<S>"]
 TRAINING_PROMPT_LENGTH = 5
 
-PRINT_INTERVAL = 10
+PRINT_INTERVAL = 1
 GEN_TEXT_INTERVAL = 20
 
 
@@ -144,7 +146,7 @@ while True:
             rnn.train()
 
         # Save the model
-        if avg_loss < best_loss and len(loss_arr) > 30:
+        if avg_loss < best_loss and len(loss_arr) > SAVE_LOSS_MIN:
             best_loss = avg_loss
             save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
 

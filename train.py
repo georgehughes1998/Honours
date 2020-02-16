@@ -7,18 +7,20 @@ from numpy import mean
 from random import choice
 import sys, re, string
 
-from model import RNN
+from model import RNN, save_state_dict, load_state_dict
 from libs.data_manager import DatasetManager
+from libs.gen import greedy_search
 from project_constants import *
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device to use:", device)
+print()
 
 ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
-LEARNING_RATE = 0.25
+LEARNING_RATE = 10
 
 BATCH_SIZE = 32
 
@@ -26,11 +28,8 @@ LOSS_PRECISION = 5
 TRAINING_PROMPTS = ["<S>"]
 TRAINING_PROMPT_LENGTH = 5
 
-PRINT_INTERVAL = 1
-GEN_TEXT_INTERVAL = 5
-SAVE_INTERVAL = 50
-
-EPOCHS = 100
+PRINT_INTERVAL = 10
+GEN_TEXT_INTERVAL = 20
 
 
 # Function to run on the dataset lines to "clean" them
@@ -48,26 +47,27 @@ dataset = DatasetManager(save_path=DATASET_INFO_PATH,
                          data_file_path=DATASET_FILE_PATHS,
                          clean_func=clean_func)
 
+# Load the dataset from the dataset info file
 try:
     dataset.load()
     print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
-
+# Load data and process it from the raw data file
 except FileNotFoundError:
     dataset.load_dataset()
     print("Loaded and processed dataset.")
 
+    # Save to avoid repeating processing
     dataset.save()
     print("Saved data set information to {}.".format(DATASET_INFO_PATH))
 
+# Display some details about the loaded dataset
 print("Vocab size:", dataset.vocab_size)
-print("Sentence len:", dataset.max_sentence_len)
-# for i in dataset.get_cleaned_data()[:10]:
-#     print(i)
+print("Sentence length:", dataset.max_sentence_len)
+print("Dataset size:", dataset.dataset_size)
 print()
 
-# Process the dataset into batches
+# Turn the dataset into batches
 dataset_tensors_pairs = [[s[:-1], s[1:]] for s in dataset.get_tensors_data()]
-
 loader = DataLoader(dataset_tensors_pairs, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
 num_batches = dataset.dataset_size // BATCH_SIZE
 
@@ -77,53 +77,38 @@ rnn.to(device)
 
 # Load state dict
 try:
-    rnn.load_state_dict(torch.load(STATE_DICT_PATH, map_location=device))
+    state_dict, epoch, batch, best_loss = load_state_dict(device)
+    rnn.load_state_dict(state_dict)
+
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
+    print("Picking up at epoch {}, batch {}.".format(epoch, batch))
+    print("Best recorded loss was {}.".format(best_loss))
+# Initialise counters if model state can't be loaded
 except FileNotFoundError:
+    epoch, batch, best_loss = 0, 0, 1000
     print("Failed to load model state.")
 print()
 
 
-# Function to return a generated string from the model
-def generate_text_from_model(model, prompt="<S>", length=15, max_prompt_length=15):
-    p = 0
-    model.eval()
-    prompt = prompt.split()
-    for i in range(length):
-        with torch.no_grad():
-            input_tensor = dataset.get_tensor_from_string(prompt[p:p+max_prompt_length]).to(device)
-            output = model(input_tensor)
-            # output = output.permute(0, 2, 1)
-            prompt += [dataset.ix_to_vocab[torch.argmax(output, dim=2)[-1].item()]]
-            p += 1
-    model.train()
-
-    textPrompt = ""
-    for w in prompt:
-        textPrompt += w + ' '
-
-    return textPrompt
-
-
-# Test initial model by generating some strings
-for s in TRAINING_PROMPTS:
-    print(generate_text_from_model(rnn, prompt=s, length=40))
-print()
-
-# Train
+# Training optimiser
 criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
 optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE)
 
-gen_str = generate_text_from_model(rnn)
+# Generate and display something from the model
+rnn.eval()
+print("Generating with current model:")
+gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), 60)
+print(gen_str)
+print()
+gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINING_PROMPT_LENGTH)
+rnn.train()
 
-# TODO: Save best weights
 
-
-for epoch in range(EPOCHS):
+# Main training loop
+while True:
 
     total_loss = 0
     loss_arr = []
-    c = 1
 
     for input, target in loader:
 
@@ -145,29 +130,40 @@ for epoch in range(EPOCHS):
         optimiser.step()
 
         # ---Display stuff---
-        loss_arr += [loss.item()]  # sum loss
+
+        # List of losses to average
+        loss_arr += [loss.item()]
+        avg_loss = round(mean(loss_arr), LOSS_PRECISION)
 
         # Generate some text using the model
-        if c % GEN_TEXT_INTERVAL == 0:
-            prompt=choice(TRAINING_PROMPTS)
-            gen_str = generate_text_from_model(rnn, length=TRAINING_PROMPT_LENGTH, prompt=prompt)
+        if batch % GEN_TEXT_INTERVAL == 0:
+            rnn.eval()
+            gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINING_PROMPT_LENGTH)
+            rnn.train()
+
+        # Save the model
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+            save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
+
+            sys.stdout.write("\rSaved model at epoch {}, batch {} with loss {}.\n".format(epoch, batch, avg_loss))
+            sys.stdout.flush()
 
         # Display progress
-        if c % PRINT_INTERVAL == 0:
-            # avg_loss = round(total_loss / PRINT_INTERVAL, 5)
+        if batch % PRINT_INTERVAL == 0:
             avg_loss = round(mean(loss_arr), LOSS_PRECISION)
-            percentage = 100 * c // num_batches
+            percentage = 100 * batch // num_batches
 
-            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}.\tLast Generated: {}"
-            output_string = output_template.format(epoch, percentage, c, num_batches, avg_loss, gen_str)
+            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}. Last Generated: {}"
+            output_string = output_template.format(epoch, percentage, batch, num_batches, avg_loss, gen_str)
 
             sys.stdout.write("\r" + output_string)
             sys.stdout.flush()
 
             total_loss = 0
 
-        # Save the model
-        if c % SAVE_INTERVAL == 0:
-            torch.save(rnn.state_dict(), STATE_DICT_PATH)
-
-        c += 1
+        # Count epochs and batches
+        batch += 1
+        if batch > num_batches:
+            epoch += 1
+            batch = 1

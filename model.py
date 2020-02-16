@@ -1,6 +1,30 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
+from project_constants import STATE_DICT_PATH
+# import torch.nn.functional as F
+
+
+# Function to load the trained model state from a file
+def load_state_dict(device):
+    state_dict_info = torch.load(STATE_DICT_PATH, map_location=device)
+    state_dict = state_dict_info['state_dict']
+    epoch = state_dict_info['epoch']
+    batch = state_dict_info['batch']
+    loss = state_dict_info['loss']
+
+    return state_dict, epoch, batch, loss
+
+
+# Function to save the trained model state to a file
+def save_state_dict(state_dict, epoch, batch, loss):
+    state_dict_info = dict()
+    state_dict_info['state_dict'] = state_dict
+    state_dict_info['epoch'] = epoch
+    state_dict_info['batch'] = batch
+    state_dict_info['loss'] = loss
+
+    torch.save(state_dict_info, STATE_DICT_PATH)
 
 
 class RNN(nn.Module):

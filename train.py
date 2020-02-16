@@ -78,7 +78,7 @@ rnn.to(device)
 # Load state dict
 try:
     state_dict, epoch, batch, best_loss = load_state_dict(device)
-    rnn.load_state_dict(state_dict)
+    rnn.load_state_dict(state_dict).to(device)
 
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
     print("Picking up at epoch {}, batch {}.".format(epoch, batch))

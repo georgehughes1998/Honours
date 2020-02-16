@@ -97,10 +97,10 @@ optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE)
 # Generate and display something from the model
 rnn.eval()
 print("Generating with current model:")
-gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), 60)
+gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split().to(device), 60)
 print(gen_str)
 print()
-gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINING_PROMPT_LENGTH)
+gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split().to(device), TRAINING_PROMPT_LENGTH)
 rnn.train()
 
 
@@ -140,7 +140,7 @@ while True:
         # Generate some text using the model
         if batch % GEN_TEXT_INTERVAL == 0:
             rnn.eval()
-            gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINING_PROMPT_LENGTH)
+            gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split().to(device), TRAINING_PROMPT_LENGTH)
             rnn.train()
 
         # Save the model

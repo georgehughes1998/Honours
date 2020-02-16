@@ -2,11 +2,12 @@ import torch
 
 from numpy.random import choice, seed
 
+
 # Function to predict the next word using a given model
 # Returns either the word or a probability distribution of the vocabulary
-def predict_next_word(model, dataset, prompt, return_ix=False, return_distribution=False):
+def predict_next_word(model, dataset, prompt, return_ix=False, return_distribution=False, device=None):
     # Run the model
-    output = model(dataset.get_tensor_from_string(prompt))
+    output = model(dataset.get_tensor_from_string(prompt).to(device))
 
     # Return a probability distribution for the vocabulary
     if return_distribution:
@@ -34,7 +35,7 @@ def predict_next_word(model, dataset, prompt, return_ix=False, return_distributi
     return return_value
 
 
-def greedy_search(model, dataset, prompt, number_to_generate, return_as_string=True):
+def greedy_search(model, dataset, prompt, number_to_generate, return_as_string=True, device=None):
     result_list = prompt
 
     with torch.no_grad():

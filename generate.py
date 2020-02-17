@@ -8,15 +8,15 @@ from abc2midi import write_abc_file, generate_midi_file, generate_ext_file
 from project_constants import *
 
 
-def write_abc(file_name, abc_string):
+def write_abc(file_name, abc_string, do_print=False):
     write_abc_file(file_name, abc_string)
-    generate_midi_file(file_name, file_name, do_print=False)
-    generate_ext_file(file_name, file_name, file_extension="png", do_print=False)
+    generate_midi_file(file_name, file_name, do_print=do_print)
+    generate_ext_file(file_name, file_name, file_extension="png", do_print=do_print)
 
 
-def remove_symbols(the_string):
-    the_string = the_string.split(end_symbol)[0]
-    return the_string.replace(start_symbol, '')
+# def remove_symbols(the_string):
+#     the_string = the_string.split(end_symbol)[0]
+#     return the_string.replace(start_symbol, '')
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -58,17 +58,17 @@ length = 200
 # result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
 # print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
 # print()
-# write_abc("output/greedy", remove_symbols(result))
+# write_abc("output/greedy", result)
 
-NUM_SAMPLE_TO_GENERATE = 4
+NUM_SAMPLE_TO_GENERATE = 10
 for i in range(NUM_SAMPLE_TO_GENERATE):
-    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=(i+0)*2)
+    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=(i+10)*5)
 
     print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
     print()
 
     try:
-        write_abc("output/sample{}".format(i), remove_symbols(result))
+        write_abc("output/sample{}".format(i), result, do_print=False)
     except AssertionError:
         print("This ABC string was probably not valid.")
 

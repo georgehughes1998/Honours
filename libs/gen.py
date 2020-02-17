@@ -80,6 +80,9 @@ def random_sample(model, dataset, prompt, number_to_generate, return_as_string=T
 
             result_list += [next_word]
 
+            if next_word == dataset.get_end_symbol():
+                break
+
     # Return as a string
     if return_as_string:
         result_string = ""

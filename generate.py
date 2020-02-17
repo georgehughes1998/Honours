@@ -67,8 +67,10 @@ for i in range(NUM_SAMPLE_TO_GENERATE):
     print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
     print()
 
-    write_abc("output/sample{}".format(i), remove_symbols(result))
-
+    try:
+        write_abc("output/sample{}".format(i), remove_symbols(result))
+    except AssertionError:
+        print("This ABC string was probably not valid.")
 
 
 # def model_get_probabilities(model, prompt="george"):

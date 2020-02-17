@@ -20,7 +20,7 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
-LEARNING_RATE = 0.05
+LEARNING_RATE = 20
 
 BATCH_SIZE = 32
 
@@ -39,7 +39,14 @@ def clean_func(dataset_lines):
     # Remove lines of length 0
     dataset_lines = [s for s in dataset_lines if len(s) > 0]
     # Remove lines which store key, meter or title information
-    dataset_lines = [s for s in dataset_lines if not s[0] in ['T', 'M', 'K']]
+    new_dataset_lines = []
+    for si in range(len(dataset_lines)-2):
+        if dataset_lines[si][0] == "T":
+            new_sentence = dataset_lines[si+1] + "\n " + dataset_lines[si+2] + "\n "
+            new_sentence += dataset_lines[si+3]
+            new_dataset_lines += [new_sentence]
+
+    dataset_lines = new_dataset_lines
 
     return dataset_lines
 

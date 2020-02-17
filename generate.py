@@ -55,14 +55,14 @@ end_symbol = dataset.get_end_symbol()
 start_prompt_string = start_symbol + " "
 length = 200
 
-result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
-print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
-print()
-write_abc("output/greedy", remove_symbols(result))
+# result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
+# print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
+# print()
+# write_abc("output/greedy", remove_symbols(result))
 
 NUM_SAMPLE_TO_GENERATE = 4
 for i in range(NUM_SAMPLE_TO_GENERATE):
-    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=i)
+    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=(i+0)*2)
 
     print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
     print()

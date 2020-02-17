@@ -41,6 +41,8 @@ class DatasetManager:
         self._pad_symbol = '<P>'
         self._end_symbol = '</S>'
 
+        self._split_char = " "
+
     def get_cleaned_data(self):
         return self._cleaned_data
 
@@ -134,7 +136,7 @@ class DatasetManager:
     # Run a given "clean" function on the dataset
     def _clean_data(self):
         self._cleaned_data = self._clean_func(self._raw_dataset)
-        self._cleaned_data = [s.split() for s in self._cleaned_data]
+        self._cleaned_data = [s.split(self._split_char) for s in self._cleaned_data]
         self.dataset_size = len(self._cleaned_data)
 
     # Gather information about vocab used in the dataset
@@ -158,10 +160,6 @@ class DatasetManager:
 
         self.max_sentence_len = max([len(s) for s in self._cleaned_data])
         self._cleaned_data = [s + [self._pad_symbol] * (self.max_sentence_len - len(s)) for s in self._cleaned_data]
-
-    # # Convert lines in the data to a list of tensors
-    # def _convert_data_to_tensors(self):
-    #     self._tensors_data = [self.get_tensor_from_string(s) for s in self._cleaned_data]
 
 
 # # Test the class

@@ -14,7 +14,7 @@ def write_abc_file(file_name, abc_strings):
     # Create a valid abc string for writing to the output file
     file_string = ""
     for si in range(len(abc_strings)):
-        file_string += "X:{}\nT:Hi\nK:Cmaj\nM:4/4\n{}\n\n".format(si, abc_strings[si])
+        file_string += "X:{}\nM:4/4\nK:Cmaj\n{}\n\n".format(si, abc_strings[si])
 
     # Write to a text file using abc notation
     with open(file_name, 'w') as file:

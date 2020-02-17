@@ -110,6 +110,7 @@ gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), 60, de
 print(gen_str)
 print()
 gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINING_PROMPT_LENGTH, device=device)
+gen_str = gen_str.replace("\n", " ")
 rnn.train()
 
 
@@ -150,6 +151,7 @@ while True:
         if batch % GEN_TEXT_INTERVAL == 0:
             rnn.eval()
             gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINING_PROMPT_LENGTH, device=device)
+            gen_str = gen_str.replace("\n", " ")
             rnn.train()
 
         # Save the model

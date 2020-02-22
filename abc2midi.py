@@ -21,7 +21,7 @@ def write_abc_file(file_name, abc_strings):
         file.write(file_string)
 
 
-def generate_midi_file(abc_file_name, midi_file_name, tune_reference_number='',do_print=False):
+def generate_midi_file(abc_file_name, midi_file_name, tune_reference_number='', do_print=False):
     # Auto-correct file extension
     if midi_file_name[-4:] != ".mid":
         midi_file_name += ".mid"

@@ -1,11 +1,12 @@
 import torch
 
 # TODO: Split data into training, validation and testing
-_TRAINING_DATA = "TRAINING"
-_VALIDATION_DATA = "VALIDATION"
-_TESTING_DATA = "TESTING"
+TRAINING_DATA = "TRAINING"
+VALIDATION_DATA = "VALIDATION"
+TESTING_DATA = "TESTING"
 
-_DATA_PARTITIONS = [_TRAINING_DATA, _VALIDATION_DATA, _TESTING_DATA]
+_DATA_PARTITIONS = [TRAINING_DATA, VALIDATION_DATA, TESTING_DATA]
+
 
 class DatasetManager:
     def __init__(self, save_path=None, data_file_path=None, clean_func=None):
@@ -53,11 +54,11 @@ class DatasetManager:
     def get_cleaned_data(self):
         return self._cleaned_data
 
-    def get_tensors_data(self, partition=_TRAINING_DATA):
+    def get_tensors_data(self, partition=TRAINING_DATA):
         return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]
         # return self._tensors_data
 
-    def get_dataset_size(self, partition=_TRAINING_DATA):
+    def get_dataset_size(self, partition=TRAINING_DATA):
         return self.dataset_size[partition]
 
     def save(self):

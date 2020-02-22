@@ -1,5 +1,6 @@
 import torch
 
+# TODO: Split data into training, validation and testing
 
 class DatasetManager:
     def __init__(self, save_path=None, data_file_path=None, clean_func=None):
@@ -67,6 +68,7 @@ class DatasetManager:
         self.max_sentence_len = obj_dictionary['max_sentence_len']
         self.dataset_size = obj_dictionary['dataset_size']
 
+        # TODO: Save un-padded cleaned data
         # self._raw_dataset = obj_dictionary['raw_dataset']
         self._cleaned_data = obj_dictionary['cleaned_data']
         # self._tensors_data = obj_dictionary['tensors_data']

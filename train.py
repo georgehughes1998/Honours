@@ -62,7 +62,7 @@ try:
     print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
 # Load data and process it from the raw data file
 except FileNotFoundError:
-    dataset.load_dataset()
+    dataset.load_dataset(split=(0.9, 0.05, 0.05))
     print("Loaded and processed dataset.")
 
     # Save to avoid repeating processing
@@ -78,7 +78,7 @@ print()
 # Turn the dataset into batches
 dataset_tensors_pairs = [[s[:-1], s[1:]] for s in dataset.get_tensors_data()]
 loader = DataLoader(dataset_tensors_pairs, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
-num_batches = dataset.dataset_size // BATCH_SIZE
+num_batches = dataset.get_dataset_size() // BATCH_SIZE
 
 # Create an instance of the model
 rnn = RNN(dataset.vocab_size)

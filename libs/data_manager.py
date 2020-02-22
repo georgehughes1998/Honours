@@ -1,6 +1,11 @@
 import torch
 
 # TODO: Split data into training, validation and testing
+_TRAINING_DATA = "TRAINING"
+_VALIDATION_DATA = "VALIDATION"
+_TESTING_DATA = "TESTING"
+
+_DATA_PARTITIONS = [_TRAINING_DATA, _VALIDATION_DATA, _TESTING_DATA]
 
 class DatasetManager:
     def __init__(self, save_path=None, data_file_path=None, clean_func=None):
@@ -20,8 +25,8 @@ class DatasetManager:
         self.vocab_to_ix = None
 
         # Info about dataset shape
-        self.max_sentence_len = None
-        self.dataset_size = None
+        self.max_sentence_len = 0
+        self.dataset_size = dict()
 
         # Function used to process the data read from the file
         if not clean_func:
@@ -32,7 +37,8 @@ class DatasetManager:
         # Stages of processing data
         self._raw_dataset = None
         self._cleaned_data = None
-        # self._tensors_data = None
+        self._partitioned_data = dict()
+        self._padded_data = dict()
 
         # Path for saving/loading this object to/from
         self._save_path = save_path
@@ -47,9 +53,12 @@ class DatasetManager:
     def get_cleaned_data(self):
         return self._cleaned_data
 
-    def get_tensors_data(self):
-        return [self.get_tensor_from_string(s) for s in self._cleaned_data]
+    def get_tensors_data(self, partition=_TRAINING_DATA):
+        return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]
         # return self._tensors_data
+
+    def get_dataset_size(self, partition=_TRAINING_DATA):
+        return self.dataset_size[partition]
 
     def save(self):
         obj_dictionary = self._generate_object_dict()
@@ -68,17 +77,19 @@ class DatasetManager:
         self.max_sentence_len = obj_dictionary['max_sentence_len']
         self.dataset_size = obj_dictionary['dataset_size']
 
-        # TODO: Save un-padded cleaned data
-        # self._raw_dataset = obj_dictionary['raw_dataset']
-        self._cleaned_data = obj_dictionary['cleaned_data']
-        # self._tensors_data = obj_dictionary['tensors_data']
+        self._partitioned_data = obj_dictionary['partitioned_data']
+        self._pad_data()
 
     # Load and process a dataset
-    def load_dataset(self, do_print=False):
+    def load_dataset(self, split=(0.8, 0.1, 0.1), do_print=False):
+        # Validate split sums to one
+        if not sum(split) == 1:
+            raise Exception("Split must sum to one.")
+
         self._load_data_from_file()
         if do_print: print("Loaded data from file(s).")
 
-        self._clean_data()
+        self._clean_data(split)
         if do_print: print("Cleaned data.")
 
         self._extract_vocab_from_data()
@@ -86,9 +97,6 @@ class DatasetManager:
 
         self._pad_data()
         if do_print: print("Padded data.")
-
-        # self._convert_data_to_tensors()
-        # if do_print: print("Converted data into tensors.")
 
     def get_pad_ix(self):
         return self.vocab_to_ix[self._pad_symbol]
@@ -112,9 +120,7 @@ class DatasetManager:
         obj_dictionary['max_sentence_len'] = self.max_sentence_len
         obj_dictionary['dataset_size'] = self.dataset_size
 
-        # obj_dictionary['raw_dataset'] = self._raw_dataset
-        obj_dictionary['cleaned_data'] = self._cleaned_data
-        # obj_dictionary['tensors_data'] = self._tensors_data
+        obj_dictionary['partitioned_data'] = self._partitioned_data
 
         return obj_dictionary
 
@@ -136,10 +142,23 @@ class DatasetManager:
         self._raw_dataset = dataset
 
     # Run a given "clean" function on the dataset
-    def _clean_data(self):
-        self._cleaned_data = self._clean_func(self._raw_dataset)
-        self._cleaned_data = [s.split(self._split_char) for s in self._cleaned_data]
-        self.dataset_size = len(self._cleaned_data)
+    def _clean_data(self, split):
+        cleaned_data = self._clean_func(self._raw_dataset)
+        cleaned_data = [s.split(self._split_char) for s in cleaned_data]
+        self._cleaned_data = cleaned_data
+
+        total_dataset_size = len(cleaned_data)
+
+        start_point = 0
+        for i in range(3):
+            end_point = int(start_point + (total_dataset_size * split[i]))
+
+            data_partition = cleaned_data[int(start_point):int(end_point)]
+            self._partitioned_data[_DATA_PARTITIONS[i]] = data_partition
+
+            start_point = end_point + 1
+
+            self.dataset_size[_DATA_PARTITIONS[i]] = len(data_partition)
 
     # Gather information about vocab used in the dataset
     def _extract_vocab_from_data(self):
@@ -158,10 +177,14 @@ class DatasetManager:
 
     # Add padding to lines in the data so each line is the same length and add start/end symbols
     def _pad_data(self):
-        self._cleaned_data = [[self._start_symbol] + s + [self._end_symbol] for s in self._cleaned_data]
+        for d in _DATA_PARTITIONS:
+            self._padded_data[d] = [[self._start_symbol] + s + [self._end_symbol] for s in self._partitioned_data[d]]
 
-        self.max_sentence_len = max([len(s) for s in self._cleaned_data])
-        self._cleaned_data = [s + [self._pad_symbol] * (self.max_sentence_len - len(s)) for s in self._cleaned_data]
+            self.max_sentence_len = max([len(s) for s in self._padded_data[d]] + [self.max_sentence_len])
+
+        for d in _DATA_PARTITIONS:
+            self._padded_data[d] = [s + [self._pad_symbol] * (self.max_sentence_len - len(s))
+                                    for s in self._padded_data[d]]
 
 
 # # Test the class

@@ -1,6 +1,5 @@
 import torch
 
-# TODO: Split data into training, validation and testing
 TRAINING_DATA = "TRAINING"
 VALIDATION_DATA = "VALIDATION"
 TESTING_DATA = "TESTING"

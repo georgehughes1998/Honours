@@ -75,7 +75,7 @@ for i in range(NUM_SAMPLE_TO_GENERATE):
     result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=seed)
     result = remove_symbols(result)
 
-    print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, seed, result))
+    print("Sample {}: Random Sample with prompt='{}', seed={}\n{}".format(i, start_prompt_string, seed, result))
 
     try:
         write_abc("output/sample{}".format(i), result, do_print=False)

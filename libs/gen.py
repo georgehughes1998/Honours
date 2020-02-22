@@ -98,7 +98,6 @@ def random_sample(model, dataset, prompt, number_to_generate, return_as_string=T
             result_string += word
         result_string = result_string[1:]
 
-
         return_value = result_string
     # Return as a list
     else:

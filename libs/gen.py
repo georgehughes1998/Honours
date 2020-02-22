@@ -1,6 +1,12 @@
 import torch
+import re
 
+from string import digits
 from numpy.random import choice, seed
+
+
+time_modifier_pattern = r'[{0}]+|/[{0}]+|[{0}]+/[{0}]+'.format(digits)
+time_modifier_pattern = re.compile(time_modifier_pattern)
 
 
 # Function to predict the next word using a given model
@@ -87,8 +93,12 @@ def random_sample(model, dataset, prompt, number_to_generate, return_as_string=T
     if return_as_string:
         result_string = ""
         for word in result_list:
-            result_string += word + ' '
-        result_string = result_string[:-1]
+            if not time_modifier_pattern.match(word):
+                result_string += ' '
+            result_string += word
+        result_string = result_string[1:]
+
+
         return_value = result_string
     # Return as a list
     else:

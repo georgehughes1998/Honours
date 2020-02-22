@@ -14,9 +14,16 @@ def write_abc(file_name, abc_string, do_print=False):
     generate_ext_file(file_name, file_name, file_extension="png", do_print=do_print)
 
 
-# def remove_symbols(the_string):
-#     the_string = the_string.split(end_symbol)[0]
-#     return the_string.replace(start_symbol, '')
+def remove_symbols(the_string):
+    return_string = the_string.replace(start_symbol + " ", '').replace(end_symbol, '')
+    remove_list = [s.strip() for s in return_string.splitlines()]
+
+    return_string = ""
+    for s in remove_list:
+        return_string += s + "\n"
+
+    return_string = return_string[:-1]
+    return return_string
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -53,7 +60,7 @@ start_symbol = dataset.get_start_symbol()
 end_symbol = dataset.get_end_symbol()
 
 start_prompt_string = start_symbol + " "
-length = 200
+length = 2000
 
 # result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
 # print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
@@ -62,10 +69,12 @@ length = 200
 
 NUM_SAMPLE_TO_GENERATE = 10
 for i in range(NUM_SAMPLE_TO_GENERATE):
-    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=(i+10)*5)
+    seed = (i+20)*14
 
-    print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, i, result))
-    print()
+    result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=seed)
+    result = remove_symbols(result)
+
+    print("Random Sample with prompt='{}', seed={}\n{}".format(start_prompt_string, seed, result))
 
     try:
         write_abc("output/sample{}".format(i), result, do_print=False)

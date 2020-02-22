@@ -20,7 +20,7 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
-LEARNING_RATE = 0.75
+LEARNING_RATE = 0.005
 
 BATCH_SIZE = 32
 

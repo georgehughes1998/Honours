@@ -50,8 +50,8 @@ class DatasetManager:
 
         self._split_char = " "
 
-    def get_cleaned_data(self):
-        return self._cleaned_data
+    def get_cleaned_data(self, partition=TRAINING_DATA):
+        return self._partitioned_data[partition]
 
     def get_tensors_data(self, partition=TRAINING_DATA):
         return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]

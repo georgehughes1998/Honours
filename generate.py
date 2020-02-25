@@ -1,7 +1,7 @@
 import torch
 import sys
 
-from model import RNN, save_state_dict, load_state_dict
+from model import RNN, load_state_dict
 from libs.data_manager import DatasetManager
 from libs.gen import random_sample, greedy_search
 from abc2midi import write_abc_file, generate_midi_file, generate_ext_file

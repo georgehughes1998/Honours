@@ -1,10 +1,15 @@
 import torch
 import sys
 
-from model import RNN
-from libs.data_manager import DatasetManager
+from model import RNN, load_state_dict
+from libs.data_manager import DatasetManager, VALIDATION_DATA
 from libs.eval import calculate_perplexity
 from project_constants import *
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Device to use:", device)
+print()
 
 
 dataset = DatasetManager(save_path=DATASET_INFO_PATH)
@@ -23,12 +28,19 @@ rnn.eval()
 
 # Load state dict
 try:
-    rnn.load_state_dict(torch.load(STATE_DICT_PATH, map_location=torch.device('cpu')))
+    state_dict, epoch, batch, best_loss = load_state_dict(device)
+    rnn.load_state_dict(state_dict)
+
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
+    print("Loaded model at epoch {}, batch {}.".format(epoch, batch))
+    print("Best recorded loss was {}.".format(best_loss))
 except FileNotFoundError:
     print("Failed to load model state.")
 print()
 
 
-perplexity = calculate_perplexity(rnn, dataset)
+validation_data = dataset.get_tensors_data(partition=VALIDATION_DATA)[:12]
+pad_ix = dataset.get_pad_ix()
+
+perplexity = calculate_perplexity(rnn, validation_data, pad_ix)
 print(perplexity)

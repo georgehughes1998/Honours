@@ -159,9 +159,9 @@ while True:
             best_loss = avg_loss
             save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
 
-            if avg_loss < 2:
-                sys.stdout.write("\rSaved model at epoch {}, batch {} with loss {}.\n".format(epoch, batch, avg_loss))
-                sys.stdout.flush()
+            # if avg_loss < 2:
+            sys.stdout.write("\rSaved model at epoch {}, batch {} with loss {}.\n".format(epoch, batch, avg_loss))
+            sys.stdout.flush()
 
         # Display progress
         if batch % PRINT_INTERVAL == 0:

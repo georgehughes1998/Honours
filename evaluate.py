@@ -39,8 +39,9 @@ except FileNotFoundError:
 print()
 
 
-validation_data = dataset.get_tensors_data(partition=VALIDATION_DATA)[:12]
+validation_data = dataset.get_tensors_data(partition=VALIDATION_DATA)
 pad_ix = dataset.get_pad_ix()
 
+print("Calculating perplexity over {} sentences of validation data.".format(len(validation_data)))
 perplexity = calculate_perplexity(rnn, validation_data, pad_ix)
-print(perplexity)
+print("Calculated perplexity:", perplexity)

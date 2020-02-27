@@ -6,7 +6,7 @@ MUSESCORE_BIN_PATH = "C:/Program Files (x86)/MuseScore 2/bin/MuseScore.exe"
 ABC_2_MIDI_PATH = "abc2midi\\abc2midi.exe"
 
 
-def write_abc_file(file_name, abc_strings):
+def write_abc_file(file_name, abc_strings, title=""):
     # Accept a single abc string
     if not isinstance(abc_strings, list):
         abc_strings = [abc_strings]
@@ -14,7 +14,7 @@ def write_abc_file(file_name, abc_strings):
     # Create a valid abc string for writing to the output file
     file_string = ""
     for si in range(len(abc_strings)):
-        file_string += "X:{}\n{}\n\n".format(si, abc_strings[si])
+        file_string += "X:{}\nT:{}\n{}\n\n".format(si, title, abc_strings[si])
 
     # Write to a text file using abc notation
     with open(file_name, 'w') as file:

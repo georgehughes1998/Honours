@@ -124,7 +124,7 @@ while True:
 
         optimiser.zero_grad()
 
-        input = input.permute(1,0).to(device)
+        input = input.permute(1, 0).to(device)
         target = target.permute(1, 0).to(device)
 
         output = rnn(input, batch_size=BATCH_SIZE)

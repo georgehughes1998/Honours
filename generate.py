@@ -8,8 +8,8 @@ from abc2midi import write_abc_file, generate_midi_file, generate_ext_file
 from project_constants import *
 
 
-def write_abc(file_name, abc_string, do_print=False):
-    write_abc_file(file_name, abc_string)
+def write_abc(file_name, abc_string, title, do_print=False):
+    write_abc_file(file_name, abc_string, title)
     generate_midi_file(file_name, file_name, do_print=do_print)
     generate_ext_file(file_name, file_name, file_extension="png", do_print=do_print)
 
@@ -66,11 +66,12 @@ length = 200
 result = greedy_search(rnn, dataset, start_prompt_string.split(), length)
 print("Greedy Search with prompt='{}'\n{}".format(start_prompt_string, result))
 print()
-write_abc("output/greedy", result)
+write_abc("output/greedy", result, "greedy")
 
 NUM_SAMPLE_TO_GENERATE = 10
 for i in range(NUM_SAMPLE_TO_GENERATE):
-    seed = (i+20)*14
+    seed = (i+20)*15
+    title = str(seed)
 
     result = random_sample(rnn, dataset, start_prompt_string.split(), length, seed_value=seed)
     result = remove_symbols(result)
@@ -78,7 +79,7 @@ for i in range(NUM_SAMPLE_TO_GENERATE):
     print("Sample {}: Random Sample with prompt='{}', seed={}\n{}".format(i, start_prompt_string, seed, result))
 
     try:
-        write_abc("output/sample{}".format(i), result, do_print=False)
+        write_abc("output/sample{}".format(i), result, title, do_print=False)
     except AssertionError:
         print("This ABC string was probably not valid.")
 

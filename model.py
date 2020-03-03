@@ -28,7 +28,12 @@ def save_state_dict(state_dict, epoch, batch, loss):
 
 
 class RNN(nn.Module):
-    def __init__(self, vocab_size, hidden_size=64, embedding_size=64):
+    def __init__(self, vocab_size,
+                 hidden_size=64,
+                 embedding_size=64,
+                 embeddings_dropout=0.3,
+                 lstm_dropout=0.5,
+                 num_decode_layers=1):
 
         super(RNN, self).__init__()
 
@@ -36,12 +41,13 @@ class RNN(nn.Module):
         self.embedding_size = embedding_size
 
         self.char_embeddings = nn.Embedding(vocab_size, embedding_size)
-        self.embeddings_dropout = nn.Dropout(0.3)
+        self.embeddings_dropout = nn.Dropout(embeddings_dropout)
 
         self.lstm = nn.LSTM(embedding_size, hidden_size)
-        self.lstm_dropout = nn.Dropout(0.5)
+        self.lstm_dropout = nn.Dropout(lstm_dropout)
 
-        self.decode = nn.Linear(hidden_size, vocab_size)
+        self.decode = [nn.Linear(hidden_size, hidden_size) for L in range(num_decode_layers-1)]
+        self.decode += [nn.Linear(hidden_size, vocab_size)]
 
         self.softmax = nn.LogSoftmax(dim=-1)
 
@@ -54,11 +60,13 @@ class RNN(nn.Module):
         hidden, _ = self.lstm(embeddings)
         hidden = self.lstm_dropout(hidden)
 
-        output = self.decode(hidden)
+        for L in self.decode:
+            hidden = L(hidden)
+        output = hidden
 
         output = self.softmax(output)
 
-        return output  # , section_output
+        return output
 
 
 # For dropout values:

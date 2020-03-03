@@ -47,8 +47,13 @@ class RNN(nn.Module):
         self.lstm = nn.LSTM(embedding_size, hidden_size)
         self.lstm_dropout = nn.Dropout(lstm_dropout)
 
-        self.decode = [nn.Linear(hidden_size, hidden_size).to(device) for L in range(num_decode_layers-1)]
-        self.decode += [nn.Linear(hidden_size, vocab_size).to(device)]
+        # Module list used to have variable number of hidden layers
+        self.decode = nn.ModuleList()
+        for L in range(num_decode_layers-1):
+            layer = nn.Linear(hidden_size, hidden_size)
+            self.decode.append(layer)
+        layer = nn.Linear(hidden_size, vocab_size)
+        self.decode.append(layer)
 
         self.softmax = nn.LogSoftmax(dim=-1)
 

@@ -62,7 +62,7 @@ try:
     print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
 # Load data and process it from the raw data file
 except FileNotFoundError:
-    dataset.load_dataset(split=(0.95, 0.03, 0.02))
+    dataset.load_dataset(split=(0.88, 0.1, 0.02))
     print("Loaded and processed dataset.")
 
     # Save to avoid repeating processing
@@ -86,8 +86,7 @@ rnn = RNN(dataset.vocab_size,
           embedding_size=64,
           embeddings_dropout=0.3,
           lstm_dropout=0.5,
-          num_decode_layers=2,
-          device=device)
+          num_decode_layers=2)
 rnn.to(device)
 
 # Load state dict

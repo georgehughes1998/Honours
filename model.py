@@ -33,8 +33,7 @@ class RNN(nn.Module):
                  embedding_size=64,
                  embeddings_dropout=0.3,
                  lstm_dropout=0.5,
-                 num_decode_layers=1,
-                 device=None):
+                 num_decode_layers=1):
 
         super(RNN, self).__init__()
 

@@ -173,7 +173,7 @@ while True:
             avg_loss = round(mean(loss_arr), LOSS_PRECISION)
             percentage = 100 * batch // num_batches
 
-            output_template = "Epoch {}: {}% complete. {}/{} processed. Loss={}. Last Generated: {}"
+            output_template = "E {} {}%. B {}/{}. L {}. G {}"
             output_string = output_template.format(epoch, percentage, batch, num_batches, avg_loss, gen_str)
 
             sys.stdout.write("\r" + output_string)
@@ -186,4 +186,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE / epoch)
+            lr = LEARNING_RATE / epoch
+            optimiser = optim.SGD(rnn.parameters(), lr=lr)
+            sys.stdout.write("\r" + "New learning rate: {}.".format(lr))
+            sys.stdout.flush()

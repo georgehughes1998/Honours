@@ -4,6 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from numpy import mean
+from math import exp
 import sys, re, string
 
 from model import RNN, save_state_dict, load_state_dict
@@ -116,8 +117,10 @@ rnn.train()
 
 
 # Training optimiser
+lrFunc = lambda e: LEARNING_RATE * exp(-e/4)
+
 criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
-lr = round(LEARNING_RATE / ((epoch + 1)*3), 4)
+lr = lrFunc(epoch)
 optimiser = optim.SGD(rnn.parameters(), lr=lr)
 
 # Array for tracking average loss of an epoch
@@ -187,7 +190,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            lr = round(LEARNING_RATE / ((epoch + 1)*3), 4)
+            lr = lrFunc(epoch)
             optimiser = optim.SGD(rnn.parameters(), lr=lr)
             sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr))
             sys.stdout.flush()

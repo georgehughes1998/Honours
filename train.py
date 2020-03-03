@@ -19,7 +19,8 @@ ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
 
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
-LEARNING_RATE = 0.25
+# Starting learning rate (should be fairly high)
+LEARNING_RATE = 5
 
 BATCH_SIZE = 32
 
@@ -103,10 +104,6 @@ except FileNotFoundError:
 print()
 
 
-# Training optimiser
-criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
-optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE)
-
 # Generate and display something from the model
 rnn.eval()
 print("Generating with current model:")
@@ -117,6 +114,10 @@ gen_str = greedy_search(rnn, dataset, dataset.get_start_symbol().split(), TRAINI
 gen_str = gen_str.replace("\n", " ")
 rnn.train()
 
+
+# Training optimiser
+criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
+optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE)
 
 # Array for tracking average loss of an epoch
 loss_arr = []
@@ -183,3 +184,6 @@ while True:
         if batch > num_batches:
             epoch += 1
             batch = 1
+
+            # Adjust the learning rate every epoch
+            optimiser = optim.SGD(rnn.parameters(), lr=LEARNING_RATE / epoch)

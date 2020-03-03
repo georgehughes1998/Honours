@@ -86,7 +86,8 @@ rnn = RNN(dataset.vocab_size,
           embedding_size=64,
           embeddings_dropout=0.3,
           lstm_dropout=0.5,
-          num_decode_layers=5)
+          num_decode_layers=5,
+          device=device)
 rnn.to(device)
 
 # Load state dict

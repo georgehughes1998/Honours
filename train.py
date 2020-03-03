@@ -186,7 +186,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            lr = LEARNING_RATE / epoch
+            lr = round(LEARNING_RATE / epoch, 4)
             optimiser = optim.SGD(rnn.parameters(), lr=lr)
             sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr))
             sys.stdout.flush()

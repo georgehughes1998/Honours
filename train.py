@@ -80,13 +80,13 @@ dataset_tensors_pairs = [[s[:-1], s[1:]] for s in dataset.get_tensors_data()]
 loader = DataLoader(dataset_tensors_pairs, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
 num_batches = dataset.get_dataset_size() // BATCH_SIZE
 
-# Create an instance of the model
+# Create an instance of the model with given hyperparameters
 rnn = RNN(dataset.vocab_size,
           hidden_size=64,
           embedding_size=64,
           embeddings_dropout=0.3,
           lstm_dropout=0.5,
-          num_decode_layers=5,
+          num_decode_layers=2,
           device=device)
 rnn.to(device)
 

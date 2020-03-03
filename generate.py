@@ -40,8 +40,13 @@ except FileNotFoundError:
     sys.exit(1)
 
 
-# Create model object
-rnn = RNN(dataset.vocab_size)
+# Create an instance of the model with given hyperparameters
+rnn = RNN(dataset.vocab_size,
+          hidden_size=MODEL_HIDDEN_SIZE,
+          embedding_size=MODEL_EMBEDDING_SIZE,
+          embeddings_dropout=MODEL_EMBEDDINGS_DROPOUT,
+          lstm_dropout=MODEL_LSTM_DROPOUT,
+          num_decode_layers=MODEL_NUM_HIDDEN_LAYERS)
 rnn.eval()
 
 # Load state dict

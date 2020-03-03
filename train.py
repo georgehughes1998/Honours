@@ -4,7 +4,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from numpy import mean
-from random import choice
 import sys, re, string
 
 from model import RNN, save_state_dict, load_state_dict
@@ -82,11 +81,11 @@ num_batches = dataset.get_dataset_size() // BATCH_SIZE
 
 # Create an instance of the model with given hyperparameters
 rnn = RNN(dataset.vocab_size,
-          hidden_size=64,
-          embedding_size=64,
-          embeddings_dropout=0.3,
-          lstm_dropout=0.5,
-          num_decode_layers=2)
+          hidden_size=MODEL_HIDDEN_SIZE,
+          embedding_size=MODEL_EMBEDDING_SIZE,
+          embeddings_dropout=MODEL_EMBEDDINGS_DROPOUT,
+          lstm_dropout=MODEL_LSTM_DROPOUT,
+          num_decode_layers=MODEL_NUM_HIDDEN_LAYERS)
 rnn.to(device)
 
 # Load state dict

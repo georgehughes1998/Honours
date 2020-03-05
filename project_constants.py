@@ -1,9 +1,37 @@
+
+# Some experimental models with different hyperparameters
+_state_dict_hyperparameters = {
+    0: {"STATE_DICT_PATH": "model/state_dict_00.pt",
+        "MODEL_HIDDEN_SIZE": 64,
+        "MODEL_EMBEDDING_SIZE": 64,
+        "MODEL_EMBEDDINGS_DROPOUT": 0.3,
+        "MODEL_LSTM_DROPOUT": 0.5,
+        "MODEL_NUM_HIDDEN_LAYERS": 1
+        },
+
+    1: {"STATE_DICT_PATH": "model/state_dict_01.pt",
+        "MODEL_HIDDEN_SIZE": 32,
+        "MODEL_EMBEDDING_SIZE": 32,
+        "MODEL_EMBEDDINGS_DROPOUT": 0.3,
+        "MODEL_LSTM_DROPOUT": 0.5,
+        "MODEL_NUM_HIDDEN_LAYERS": 1
+        },
+}
+
+
 DATASET_INFO_PATH = "data/dataset_info.pt"
-STATE_DICT_PATH = "model/state_dict.pt"
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
-MODEL_HIDDEN_SIZE = 64
-MODEL_EMBEDDING_SIZE = 64
-MODEL_EMBEDDINGS_DROPOUT = 0.3
-MODEL_LSTM_DROPOUT = 0.5
-MODEL_NUM_HIDDEN_LAYERS = 1
+
+# Choose which experimental model to test with
+_MODEL_TO_USE = 1
+
+STATE_DICT_PATH = _state_dict_hyperparameters[_MODEL_TO_USE]["STATE_DICT_PATH"]
+
+MODEL_HIDDEN_SIZE = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_HIDDEN_SIZE"]
+MODEL_EMBEDDING_SIZE = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_EMBEDDING_SIZE"]
+MODEL_EMBEDDINGS_DROPOUT = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_EMBEDDINGS_DROPOUT"]
+MODEL_LSTM_DROPOUT = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_LSTM_DROPOUT"]
+MODEL_NUM_HIDDEN_LAYERS = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_NUM_HIDDEN_LAYERS"]
+
+

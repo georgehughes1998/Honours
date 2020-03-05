@@ -38,7 +38,7 @@ _state_dict_hyperparameters = {
         "MODEL_NUM_HIDDEN_LAYERS": 2
         },
 
-    # Calculated perplexity:
+    # Calculated perplexity: 5.414186633376884
     4: {"STATE_DICT_PATH": "model/state_dict_04.pt",
         "MODEL_HIDDEN_SIZE": 128,
         "MODEL_EMBEDDING_SIZE": 128,
@@ -47,7 +47,7 @@ _state_dict_hyperparameters = {
         "MODEL_NUM_HIDDEN_LAYERS": 1
         },
 
-    # Calculated perplexity:
+    # Calculated perplexity: 4.5686740477528796
     5: {"STATE_DICT_PATH": "model/state_dict_05.pt",
         "MODEL_HIDDEN_SIZE": 128,
         "MODEL_EMBEDDING_SIZE": 128,

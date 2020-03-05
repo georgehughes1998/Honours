@@ -18,7 +18,8 @@ class LearningRate:
         self.initial_lr = initial_lr
         self.last_saved = epoch
         self.epoch = epoch
-        self.counter = epoch
+        self.counter = 0
+        self.running_counter = 2
 
     def model_was_saved(self, epoch):
         self.last_saved = epoch
@@ -27,7 +28,12 @@ class LearningRate:
         self.epoch = epoch
         self.counter = epoch - self.last_saved
 
-        learning_rate = self.initial_lr * exp(-(epoch - self.counter)/4)
+        if self.counter == 0:
+            self.running_counter -= 1
+        else:
+            self.running_counter += 1
+
+        learning_rate = self.initial_lr * exp(-(epoch - self.running_counter)/4)
         return learning_rate
 
 

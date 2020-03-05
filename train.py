@@ -14,16 +14,20 @@ from project_constants import *
 
 
 class LearningRate:
-    def __init__(self, initial_lr, epoch=0):
+    def __init__(self, initial_lr, epoch):
         self.initial_lr = initial_lr
+        self.last_saved = epoch
         self.epoch = epoch
-        self.counter = 0
+        self.counter = epoch
 
-    def model_was_saved(self):
-        self.counter += 1
+    def model_was_saved(self, epoch):
+        self.last_saved = epoch
 
-    def get_learning_rate(self):
-        learning_rate = self.initial_lr * exp(-(self.epoch - (self.epoch-self.counter))/4)
+    def get_learning_rate(self, epoch):
+        self.epoch = epoch
+        self.counter = epoch - self.last_saved
+
+        learning_rate = self.initial_lr * exp(-(epoch - self.counter)/4)
         return learning_rate
 
 
@@ -132,10 +136,10 @@ rnn.train()
 
 
 # Training optimiser
-lr = LearningRate(LEARNING_RATE, epoch=epoch)
+lr = LearningRate(LEARNING_RATE, epoch)
 criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
-optimiser = optim.SGD(rnn.parameters(), lr=lr.get_learning_rate())
-print("Using learning rate {}.".format(lr.get_learning_rate()))
+optimiser = optim.SGD(rnn.parameters(), lr=lr.get_learning_rate(epoch))
+print("Using learning rate {}.".format(lr.get_learning_rate(epoch)))
 print()
 
 # Array for tracking average loss of an epoch
@@ -184,7 +188,7 @@ while True:
             best_loss = avg_loss
             save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
 
-            lr.model_was_saved()
+            lr.model_was_saved(epoch)
 
             # if avg_loss < 2:
             sys.stdout.write("\rSaved model at epoch {}, batch {} with loss {}.\n".format(epoch, batch, avg_loss))
@@ -208,7 +212,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            learning_rate = lr.get_learning_rate()
+            learning_rate = lr.get_learning_rate(epoch)
             optimiser = optim.SGD(rnn.parameters(), lr=learning_rate)
             sys.stdout.write("\r" + "New learning rate: {}.\n".format(learning_rate))
             sys.stdout.flush()

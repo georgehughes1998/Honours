@@ -12,6 +12,21 @@ from libs.data_manager import DatasetManager
 from libs.gen import greedy_search
 from project_constants import *
 
+
+class LearningRate:
+    def __init__(self, initial_lr, epoch=0):
+        self.initial_lr = initial_lr
+        self.epoch = 0
+        self.counter = 0
+
+    def model_was_saved(self):
+        self.counter += 1
+
+    def get_learning_rate(self):
+        learning_rate = self.initial_lr * exp(-(self.epoch - (self.epoch-self.counter))/4)
+        return learning_rate
+
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device to use:", device)
 print()
@@ -117,13 +132,9 @@ rnn.train()
 
 
 # Training optimiser
-lrFunc = lambda ep, ls: LEARNING_RATE * exp(-(ep - (ep-ls))/4)
-
-last_save_epoch = epoch
-
+lr = LearningRate(LEARNING_RATE, epoch=epoch)
 criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
-lr = lrFunc(epoch, last_save_epoch)
-optimiser = optim.SGD(rnn.parameters(), lr=lr)
+optimiser = optim.SGD(rnn.parameters(), lr=lr.get_learning_rate())
 
 # Array for tracking average loss of an epoch
 loss_arr = []
@@ -169,8 +180,9 @@ while True:
         # Save the model
         if avg_loss < best_loss and len(loss_arr) > SAVE_LOSS_MIN:
             best_loss = avg_loss
-            last_save_epoch = epoch
             save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
+
+            lr.model_was_saved()
 
             # if avg_loss < 2:
             sys.stdout.write("\rSaved model at epoch {}, batch {} with loss {}.\n".format(epoch, batch, avg_loss))
@@ -194,7 +206,6 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            lr = lrFunc(epoch, last_save_epoch)
-            optimiser = optim.SGD(rnn.parameters(), lr=lr)
-            sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr))
+            optimiser = optim.SGD(rnn.parameters(), lr=lr.get_learning_rate())
+            sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr.get_learning_rate()))
             sys.stdout.flush()

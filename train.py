@@ -16,7 +16,7 @@ from project_constants import *
 class LearningRate:
     def __init__(self, initial_lr, epoch=0):
         self.initial_lr = initial_lr
-        self.epoch = 0
+        self.epoch = epoch
         self.counter = 0
 
     def model_was_saved(self):
@@ -135,6 +135,8 @@ rnn.train()
 lr = LearningRate(LEARNING_RATE, epoch=epoch)
 criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
 optimiser = optim.SGD(rnn.parameters(), lr=lr.get_learning_rate())
+print("Using learning rate {}.".format(lr.get_learning_rate()))
+print()
 
 # Array for tracking average loss of an epoch
 loss_arr = []
@@ -206,6 +208,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            optimiser = optim.SGD(rnn.parameters(), lr=lr.get_learning_rate())
-            sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr.get_learning_rate()))
+            learning_rate = lr.get_learning_rate()
+            optimiser = optim.SGD(rnn.parameters(), lr=learning_rate)
+            sys.stdout.write("\r" + "New learning rate: {}.\n".format(learning_rate))
             sys.stdout.flush()

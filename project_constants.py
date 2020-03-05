@@ -2,7 +2,7 @@
 # Some experimental models with different hyperparameters
 _state_dict_hyperparameters = {
 
-    # Calculated perplexity: 5.248993110265497
+    # Calculated perplexity:
     0: {"STATE_DICT_PATH": "model/state_dict_00.pt",
         "MODEL_HIDDEN_SIZE": 64,
         "MODEL_EMBEDDING_SIZE": 64,
@@ -29,13 +29,22 @@ _state_dict_hyperparameters = {
         "MODEL_NUM_HIDDEN_LAYERS": 1
         },
 
-    # Calculated perplexity:
+    # Calculated perplexity: 6.159301027090821
     3: {"STATE_DICT_PATH": "model/state_dict_03.pt",
         "MODEL_HIDDEN_SIZE": 64,
         "MODEL_EMBEDDING_SIZE": 64,
         "MODEL_EMBEDDINGS_DROPOUT": 0.3,
         "MODEL_LSTM_DROPOUT": 0.5,
         "MODEL_NUM_HIDDEN_LAYERS": 2
+        },
+
+    # Calculated perplexity:
+    4: {"STATE_DICT_PATH": "model/state_dict_04.pt",
+        "MODEL_HIDDEN_SIZE": 128,
+        "MODEL_EMBEDDING_SIZE": 128,
+        "MODEL_EMBEDDINGS_DROPOUT": 0.6,
+        "MODEL_LSTM_DROPOUT": 0.7,
+        "MODEL_NUM_HIDDEN_LAYERS": 1
         },
 }
 
@@ -45,7 +54,7 @@ DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
 
 # Choose which experimental model to test with
-_MODEL_TO_USE = 0
+_MODEL_TO_USE = 4
 
 STATE_DICT_PATH = _state_dict_hyperparameters[_MODEL_TO_USE]["STATE_DICT_PATH"]
 

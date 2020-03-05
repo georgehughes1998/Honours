@@ -14,10 +14,13 @@ from project_constants import *
 
 
 class LearningRate:
-    def __init__(self, initial_lr, epoch):
+    def __init__(self, initial_lr, epoch, creep_rate=0.25):
+        self.creep_rate = creep_rate
+
         self.initial_lr = initial_lr
         self.last_saved = epoch
         self.epoch = epoch
+
         self.counter = 0
         self.running_counter = 2
 
@@ -31,7 +34,7 @@ class LearningRate:
         if self.counter == 0:
             self.running_counter -= 1
         else:
-            self.running_counter += 1.25
+            self.running_counter += 1 + self.creep_rate
 
         learning_rate = self.initial_lr * exp(-(epoch - self.running_counter)/4)
         return learning_rate

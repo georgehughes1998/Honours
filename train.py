@@ -117,15 +117,17 @@ rnn.train()
 
 
 # Training optimiser
-lrFunc = lambda e: LEARNING_RATE * exp(-e/4)
+lrFunc = lambda ep, ls: LEARNING_RATE * exp(-(ep - (ep-ls))/4)
+
+last_save_epoch = epoch
 
 criterion = nn.NLLLoss(ignore_index=dataset.get_pad_ix())
-lr = lrFunc(epoch)
+lr = lrFunc(epoch, last_save_epoch)
 optimiser = optim.SGD(rnn.parameters(), lr=lr)
 
 # Array for tracking average loss of an epoch
 loss_arr = []
-last_save_epoch = epoch
+
 
 # Main training loop
 while True:
@@ -192,7 +194,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            lr = lrFunc(epoch - (epoch - last_save_epoch))
+            lr = lrFunc(epoch, last_save_epoch)
             optimiser = optim.SGD(rnn.parameters(), lr=lr)
             sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr))
             sys.stdout.flush()

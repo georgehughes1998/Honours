@@ -59,6 +59,7 @@ try:
     print("Best recorded loss was {}.".format(best_loss))
 except FileNotFoundError:
     print("Failed to load model state.")
+    sys.exit(1)
 print()
 
 start_symbol = dataset.get_start_symbol()

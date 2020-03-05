@@ -1,6 +1,8 @@
 
 # Some experimental models with different hyperparameters
 _state_dict_hyperparameters = {
+
+    # Calculated perplexity: 5.248993110265497
     0: {"STATE_DICT_PATH": "model/state_dict_00.pt",
         "MODEL_HIDDEN_SIZE": 64,
         "MODEL_EMBEDDING_SIZE": 64,
@@ -9,6 +11,7 @@ _state_dict_hyperparameters = {
         "MODEL_NUM_HIDDEN_LAYERS": 1
         },
 
+    # Calculated perplexity: 6.267296195073176
     1: {"STATE_DICT_PATH": "model/state_dict_01.pt",
         "MODEL_HIDDEN_SIZE": 32,
         "MODEL_EMBEDDING_SIZE": 32,
@@ -17,6 +20,7 @@ _state_dict_hyperparameters = {
         "MODEL_NUM_HIDDEN_LAYERS": 1
         },
 
+    # Calculated perplexity: 4.8019283890479985
     2: {"STATE_DICT_PATH": "model/state_dict_02.pt",
         "MODEL_HIDDEN_SIZE": 128,
         "MODEL_EMBEDDING_SIZE": 128,

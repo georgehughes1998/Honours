@@ -125,6 +125,7 @@ optimiser = optim.SGD(rnn.parameters(), lr=lr)
 
 # Array for tracking average loss of an epoch
 loss_arr = []
+last_save_epoch = epoch
 
 # Main training loop
 while True:
@@ -166,6 +167,7 @@ while True:
         # Save the model
         if avg_loss < best_loss and len(loss_arr) > SAVE_LOSS_MIN:
             best_loss = avg_loss
+            last_save_epoch = epoch
             save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
 
             # if avg_loss < 2:
@@ -190,7 +192,7 @@ while True:
             batch = 1
 
             # Adjust the learning rate every epoch
-            lr = lrFunc(epoch)
+            lr = lrFunc(epoch - (epoch - last_save_epoch))
             optimiser = optim.SGD(rnn.parameters(), lr=lr)
             sys.stdout.write("\r" + "New learning rate: {}.\n".format(lr))
             sys.stdout.flush()

@@ -31,7 +31,7 @@ class LearningRate:
         if self.counter == 0:
             self.running_counter -= 1
         else:
-            self.running_counter += 1
+            self.running_counter += 0.2
 
         learning_rate = self.initial_lr * exp(-(epoch - self.running_counter)/4)
         return learning_rate
@@ -214,11 +214,11 @@ while True:
         # Count epochs and batches
         batch += 1
         if batch > num_batches:
-            epoch += 1
-            batch = 1
-
             # Adjust the learning rate every epoch
             learning_rate = lr.get_learning_rate(epoch)
             optimiser = optim.SGD(rnn.parameters(), lr=learning_rate)
             sys.stdout.write("\r" + "New learning rate: {}.\n".format(learning_rate))
             sys.stdout.flush()
+
+            epoch += 1
+            batch = 1

@@ -31,7 +31,7 @@ class LearningRate:
         if self.counter == 0:
             self.running_counter -= 1
         else:
-            self.running_counter += 0.2
+            self.running_counter += 0.25
 
         learning_rate = self.initial_lr * exp(-(epoch - self.running_counter)/4)
         return learning_rate

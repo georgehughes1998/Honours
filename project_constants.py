@@ -32,7 +32,7 @@ DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
 
 # Choose which experimental model to test with
-_MODEL_TO_USE = 1
+_MODEL_TO_USE = 2
 
 STATE_DICT_PATH = _state_dict_hyperparameters[_MODEL_TO_USE]["STATE_DICT_PATH"]
 

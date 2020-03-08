@@ -3,6 +3,7 @@ import torch
 TRAINING_DATA = "TRAINING"
 VALIDATION_DATA = "VALIDATION"
 TESTING_DATA = "TESTING"
+ALL_DATA = "ALL"
 
 _DATA_PARTITIONS = [TRAINING_DATA, VALIDATION_DATA, TESTING_DATA]
 
@@ -51,14 +52,21 @@ class DatasetManager:
         self._split_char = " "
 
     def get_cleaned_data(self, partition=TRAINING_DATA):
-        return self._partitioned_data[partition]
+        if partition == ALL_DATA:
+            return self._partitioned_data[TRAINING_DATA] + \
+                   self._partitioned_data[VALIDATION_DATA] + \
+                   self._partitioned_data[TESTING_DATA]
+        else:
+            return self._partitioned_data[partition]
 
     def get_tensors_data(self, partition=TRAINING_DATA):
         return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]
-        # return self._tensors_data
 
     def get_dataset_size(self, partition=TRAINING_DATA):
-        return self.dataset_size[partition]
+        if partition == ALL_DATA:
+            return sum(self.dataset_size.values())
+        else:
+            return self.dataset_size[partition]
 
     def save(self):
         obj_dictionary = self._generate_object_dict()

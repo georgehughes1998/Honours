@@ -1,10 +1,10 @@
-import sys
+# import sys
 import string
 
-from libs.data_manager import DatasetManager, ALL_DATA
-from project_constants import DATASET_INFO_PATH, DATASET_FILE_PATHS
+# from libs.data_manager import DatasetManager, ALL_DATA
+# from project_constants import DATASET_INFO_PATH, DATASET_FILE_PATHS
 
-DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
+# DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
 
 
 def get_struct(piece):
@@ -104,47 +104,47 @@ def get_struct(piece):
     return named_sections
 
 
-# Create a dataset manager object to store/load/save info about the dataset
-dataset = DatasetManager(save_path=DATASET_INFO_PATH,
-                         data_file_path=DATASET_FILE_PATHS,
-                         clean_func=None)
-
-# Load the dataset from the dataset info file
-try:
-    dataset.load()
-    print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
-except FileNotFoundError:
-    print("Failed to load dataset information from {}.".format(DATASET_INFO_PATH))
-    sys.exit(1)
-
-# Display some details about the loaded dataset
-print("Vocab size:", dataset.vocab_size)
-print("Sentence length:", dataset.max_sentence_len)
-print("Dataset size:", dataset.dataset_size)
-print()
-
-pieces = dataset.get_cleaned_data(ALL_DATA)
-length = dataset.get_dataset_size(ALL_DATA)
-print("Using {} tunes.".format(length))
-print()
-
-# TODO: Save the generated structure to a .pt file
-
-# get_struct(pieces[54])
-sections_list = []
-
-c = 0
-failure_count = 0
-for p in pieces[:]:
-    try:
-        sections_list += [get_struct(p)]
-    except:
-        failure_count += 1
-        # print(c, p)
-    c += 1
-
-print("{} failures. That is {}% of the dataset.".format(failure_count, 100*failure_count/length))
-
-from random import sample
-for sec in sample(sections_list, 100):
-    print(sec)
+# # Create a dataset manager object to store/load/save info about the dataset
+# dataset = DatasetManager(save_path=DATASET_INFO_PATH,
+#                          data_file_path=DATASET_FILE_PATHS,
+#                          clean_func=None)
+#
+# # Load the dataset from the dataset info file
+# try:
+#     dataset.load()
+#     print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
+# except FileNotFoundError:
+#     print("Failed to load dataset information from {}.".format(DATASET_INFO_PATH))
+#     sys.exit(1)
+#
+# # Display some details about the loaded dataset
+# print("Vocab size:", dataset.vocab_size)
+# print("Sentence length:", dataset.max_sentence_len)
+# print("Dataset size:", dataset.dataset_size)
+# print()
+#
+# pieces = dataset.get_cleaned_data(ALL_DATA)
+# length = dataset.get_dataset_size(ALL_DATA)
+# print("Using {} tunes.".format(length))
+# print()
+#
+# # TODO: Save the generated structure to a .pt file
+#
+# # get_struct(pieces[54])
+# sections_list = []
+#
+# c = 0
+# failure_count = 0
+# for p in pieces[:]:
+#     try:
+#         sections_list += [get_struct(p)]
+#     except:
+#         failure_count += 1
+#         # print(c, p)
+#     c += 1
+#
+# print("{} failures. That is {}% of the dataset.".format(failure_count, 100*failure_count/length))
+#
+# from random import sample
+# for sec in sample(sections_list, 100):
+#     print(sec)

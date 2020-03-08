@@ -17,8 +17,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device to use:", device)
 print()
 
-ALLOWED_CHARS = string.ascii_letters + string.digits + string.punctuation + " "
-
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
 # Starting learning rate (should be fairly high)

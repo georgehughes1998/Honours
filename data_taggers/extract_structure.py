@@ -7,7 +7,6 @@ from project_constants import DATASET_INFO_PATH, DATASET_FILE_PATHS
 DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
 
 
-# TODO: Fix algorithm for getting structure
 def get_struct(piece):
     # Remove key and time information
     piece = piece[3:]

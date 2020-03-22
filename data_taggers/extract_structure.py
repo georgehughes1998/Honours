@@ -132,7 +132,6 @@ length = dataset.get_dataset_size(ALL_DATA)
 print("Using {} tunes.".format(length))
 print()
 
-# TODO: Save the generated structure to a .pt file
 
 get_struct(pieces[12])
 sections_list = []

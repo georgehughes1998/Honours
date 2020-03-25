@@ -86,6 +86,7 @@ _state_dict_hyperparameters = {
 
 
 DATASET_INFO_PATH = "data/dataset_info.pt"
+DATASET_TAG_INFO_PATH = "data/dataset_tag_info.pt"
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
 

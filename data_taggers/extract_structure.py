@@ -12,6 +12,7 @@ DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
 def get_struct(piece):
     # Remove key and time information
     piece = piece[2:]
+    orig_piece = piece
     piece = iter(piece)
 
     section_letter = iter(string.ascii_uppercase)
@@ -42,10 +43,14 @@ def get_struct(piece):
             last_bar = [p]  # + " "
         else:
             last_bar += [p]  # + " "
-    if not "|" in p:
+    if not bars[-1][-1] == p:
         bars[-1] += p
-    else:
-        bars[-1] += [p]
+    # if not "|" in p:
+    #     bars[-1] += p
+    # else:
+    #     bars[-1] += [p]
+
+    # print("Bars", bars)
 
     # Anacrusis
     bars = iter(bars)
@@ -59,10 +64,6 @@ def get_struct(piece):
         else:
             new_bars.append(b)
     bars = new_bars
-
-    n = iter(range(1, 100))
-    # for b in bars:
-        # print(next(n), "\t", b)
 
     # Sections
     sections = []
@@ -102,8 +103,17 @@ def get_struct(piece):
 
     named_sections = dict()
 
+    result_piece = []
     for s in sections:
         named_sections[next(section_letter)] = s
+
+        result_piece += s[0]
+
+    if orig_piece != result_piece:
+        # print(orig_piece)
+        # print(result_piece)
+        # print()
+        raise(Exception("Resulting piece doesn't match original piece"))
 
     return named_sections
 
@@ -133,12 +143,12 @@ print("Using {} tunes.".format(length))
 print()
 
 
-get_struct(pieces[12])
+# get_struct(pieces[12])
 sections_list = []
 
 c = 0
 failure_count = 0
-for p in pieces:
+for p in pieces[:]:
     try:
         sections_list += [get_struct(p)]
     except BaseException as e:

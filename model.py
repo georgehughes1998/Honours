@@ -37,8 +37,8 @@ class RNN(nn.Module):
 
         super(RNN, self).__init__()
 
-        self.hidden_size = hidden_size
-        self.embedding_size = embedding_size
+        # self.hidden_size = hidden_size
+        # self.embedding_size = embedding_size
 
         self.char_embeddings = nn.Embedding(vocab_size, embedding_size)
         self.embeddings_dropout = nn.Dropout(embeddings_dropout)
@@ -81,21 +81,40 @@ class RNN(nn.Module):
 
 # TODO: Test
 class MultiTaskRNN(nn.Module):
-    def __init__(self, vocab_size, tagset_size, hidden_size=64, embedding_size=64):
+    def __init__(self, vocab_size,
+                 tagset_size,
+                 hidden_size=64,
+                 embedding_size=64,
+                 embeddings_dropout=0.3,
+                 lstm_dropout=0.5,
+                 num_decode_layers=1):
 
         super(MultiTaskRNN, self).__init__()
 
-        self.hidden_size = hidden_size
-        self.embedding_size = embedding_size
+        # self.hidden_size = hidden_size
+        # self.embedding_size = embedding_size
 
         self.char_embeddings = nn.Embedding(vocab_size, embedding_size)
-        self.embeddings_dropout = nn.Dropout(0.3)
+        self.embeddings_dropout = nn.Dropout(embeddings_dropout)
 
         self.lstm = nn.LSTM(embedding_size, hidden_size)
-        self.lstm_dropout = nn.Dropout(0.5)
+        self.lstm_dropout = nn.Dropout(lstm_dropout)
 
-        self.decode = nn.Linear(hidden_size, vocab_size)
-        self.tagger_decode = nn.Linear(hidden_size, tagset_size)
+        # Module list used to have variable number of hidden layers
+        self.decode = nn.ModuleList()
+        for L in range(num_decode_layers-1):
+            layer = nn.Linear(hidden_size, hidden_size)
+            self.decode.append(layer)
+        layer = nn.Linear(hidden_size, vocab_size)
+        self.decode.append(layer)
+
+        self.decode_tag = nn.ModuleList()
+        for L in range(num_decode_layers-1):
+            layer = nn.Linear(hidden_size, hidden_size)
+            self.decode_tag.append(layer)
+        layer = nn.Linear(hidden_size, vocab_size)
+        self.decode_tag.append(layer)
+        self.decode_tag = nn.Linear(hidden_size, tagset_size)
 
         self.softmax = nn.LogSoftmax(dim=-1)
 
@@ -108,10 +127,18 @@ class MultiTaskRNN(nn.Module):
         hidden, _ = self.lstm(embeddings)
         hidden = self.lstm_dropout(hidden)
 
-        output = self.decode(hidden)
+        hidden_decode = hidden
+        hidden_tag_decode = hidden
+
+        for L in self.decode:
+            hidden_decode = L(hidden_decode)
+        output = hidden_decode
+
+        for L in self.decode_tag:
+            hidden_tag_decode = L(hidden_tag_decode)
+        output_tag = hidden_tag_decode
+
         output = self.softmax(output)
+        output_tag = self.softmax(output_tag)
 
-        tagger_output = self.tagger_decode(hidden)
-        tagger_output = self.softmax(tagger_output)
-
-        return output, tagger_output
+        return output, output_tag

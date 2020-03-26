@@ -7,6 +7,7 @@ from libs.data_manager_tag import DatasetManagerTag
 from project_constants import DATASET_INFO_PATH, DATASET_TAG_INFO_PATH, DATASET_FILE_PATHS, DATASET_SPLIT
 
 DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
+DATASET_TAG_INFO_PATH = "../" + DATASET_TAG_INFO_PATH
 
 # Maybe make MIN 1 since resulting dataset is quite small with 2
 MIN_NUMBER_SECTIONS = 2

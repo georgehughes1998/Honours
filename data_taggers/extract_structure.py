@@ -8,6 +8,8 @@ from project_constants import DATASET_INFO_PATH, DATASET_TAG_INFO_PATH, DATASET_
 
 DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
 
+# Maybe make MIN 1 since resulting dataset is quite small with 2
+MIN_NUMBER_SECTIONS = 2
 MAX_NUMBER_SECTIONS = 5
 
 
@@ -118,6 +120,9 @@ def get_struct(piece):
         # print()
         raise(Exception("Resulting piece doesn't match original piece"))
 
+    if len(named_sections) < MIN_NUMBER_SECTIONS:
+        raise(Exception("Resulting piece has too few sections."))
+
     return named_sections
 
 
@@ -161,11 +166,12 @@ for p in pieces[:]:
         # print()
     c += 1
 
-print("{} failures. That is {}% of the dataset.".format(failure_count, 100*failure_count/length))
+print("{} failures. That is {}% of the dataset.".format(failure_count, round(100*failure_count/length,2)))
 
 
 for sec in sample(sections_list, 3):
     print(sec)
 
-dataset_tag = DatasetManagerTag()
+dataset_tag = DatasetManagerTag(save_path=DATASET_TAG_INFO_PATH)
 dataset_tag.load_dataset(sections_list, split=DATASET_SPLIT)
+dataset_tag.save()

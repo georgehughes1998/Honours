@@ -157,6 +157,7 @@ class DatasetManager:
 
         total_dataset_size = len(cleaned_data)
 
+        # Partition data
         start_point = 0
         for i in range(3):
             end_point = int(start_point + (total_dataset_size * split[i]))

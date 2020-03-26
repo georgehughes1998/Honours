@@ -8,6 +8,17 @@ ALL_DATA = "ALL"
 _DATA_PARTITIONS = [TRAINING_DATA, VALIDATION_DATA, TESTING_DATA]
 
 
+# Turn a piece with sections into a normal piece
+def compile_piece(piece):
+    result_piece = []
+    result_tags = []
+    for section in piece:
+        result_piece += piece[section]
+        result_tags += [section] * len(piece[section])
+
+    return result_piece, result_tags
+
+
 class DatasetManagerTag:
     def __init__(self, save_path=None):
 
@@ -38,6 +49,7 @@ class DatasetManagerTag:
         self._pad_symbol = '<P>'
         self._end_symbol = '</S>'
         self._no_tag_symbol = '<NT>'
+        self._sig_symbol = '<SIG>'
 
         self._split_char = " "
 
@@ -85,7 +97,7 @@ class DatasetManagerTag:
         if not sum(split) == 1:
             raise Exception("Split must sum to one.")
 
-        self._load_data_from_sections_list(sections_list)
+        self._load_data_from_sections_list(sections_list, split)
         if do_print: print("Loaded data from sections list.")
 
         self._extract_vocab_from_data(sections_list)
@@ -102,6 +114,12 @@ class DatasetManagerTag:
 
     def get_end_symbol(self):
         return self._end_symbol
+
+    def get_sig_symbol(self):
+        return self._sig_symbol
+
+    def get_no_tag_symbol(self):
+        return self._no_tag_symbol
 
     def _generate_object_dict(self):
         obj_dictionary = dict()
@@ -128,11 +146,22 @@ class DatasetManagerTag:
     def get_tensor_from_tags(self, the_tags):
         return torch.tensor([self.tag_to_ix[c] for c in the_tags], dtype=torch.long)
 
-    def _load_data_from_sections_list(self, sections_list):
-        # TODO: Implement
+    def _load_data_from_sections_list(self, sections_list, split):
+        # TODO: Test
+
+        total_dataset_size = len(sections_list)
 
         # Store data in partitions
-        pass
+        start_point = 0
+        for i in range(3):
+            end_point = int(start_point + (total_dataset_size * split[i]))
+
+            data_partition = sections_list[int(start_point):int(end_point)]
+            self._partitioned_data[_DATA_PARTITIONS[i]] = data_partition
+
+            start_point = end_point + 1
+
+            self.dataset_size[_DATA_PARTITIONS[i]] = len(data_partition)
 
     # Gather information about vocab used in the dataset
     def _extract_vocab_from_data(self, sections_list):
@@ -162,6 +191,13 @@ class DatasetManagerTag:
     def _pad_data(self):
         # TODO: Fix
         for d in _DATA_PARTITIONS:
+
+            test_piece = self._partitioned_data[d][0]
+            test_piece_compile = compile_piece(test_piece)
+
+            print(test_piece)
+            print(test_piece_compile)
+
             self._padded_data[d] = [[self._start_symbol] + s + [self._end_symbol] for s in self._partitioned_data[d]]
 
             self.max_sentence_len = max([len(s) for s in self._padded_data[d]] + [self.max_sentence_len])

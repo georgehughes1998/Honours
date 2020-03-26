@@ -13,8 +13,9 @@ MIN_NUMBER_SECTIONS = 2
 MAX_NUMBER_SECTIONS = 5
 
 
-def get_struct(piece):
+def get_struct(piece, sig_symbol):
     # Remove key and time information
+    sig_info = piece[:2]
     piece = piece[2:]
     orig_piece = piece
     piece = iter(piece)
@@ -123,6 +124,8 @@ def get_struct(piece):
     if len(named_sections) < MIN_NUMBER_SECTIONS:
         raise(Exception("Resulting piece has too few sections."))
 
+    named_sections[sig_symbol] = sig_info
+
     return named_sections
 
 
@@ -151,6 +154,8 @@ print("Using {} tunes.".format(length))
 print()
 
 
+dataset_tag = DatasetManagerTag(save_path=DATASET_TAG_INFO_PATH)
+sig_symbol = dataset_tag.get_sig_symbol()
 # get_struct(pieces[12])
 sections_list = []
 
@@ -158,7 +163,7 @@ c = 0
 failure_count = 0
 for p in pieces[:]:
     try:
-        sections_list += [get_struct(p)]
+        sections_list += [get_struct(p, sig_symbol)]
     except BaseException as e:
         failure_count += 1
         # print(c, p)
@@ -172,6 +177,6 @@ print("{} failures. That is {}% of the dataset.".format(failure_count, round(100
 for sec in sample(sections_list, 3):
     print(sec)
 
-dataset_tag = DatasetManagerTag(save_path=DATASET_TAG_INFO_PATH)
+
 dataset_tag.load_dataset(sections_list, split=DATASET_SPLIT)
 dataset_tag.save()

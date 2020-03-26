@@ -4,7 +4,7 @@ from random import sample
 
 from libs.data_manager import DatasetManager, ALL_DATA
 from libs.data_manager_tag import DatasetManagerTag
-from project_constants import DATASET_INFO_PATH, DATASET_TAG_INFO_PATH, DATASET_FILE_PATHS
+from project_constants import DATASET_INFO_PATH, DATASET_TAG_INFO_PATH, DATASET_FILE_PATHS, DATASET_SPLIT
 
 DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
 
@@ -168,4 +168,4 @@ for sec in sample(sections_list, 3):
     print(sec)
 
 dataset_tag = DatasetManagerTag()
-dataset_tag.load_dataset(sections_list)
+dataset_tag.load_dataset(sections_list, split=DATASET_SPLIT)

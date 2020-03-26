@@ -62,7 +62,7 @@ try:
     print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
 # Load data and process it from the raw data file
 except FileNotFoundError:
-    dataset.load_dataset(split=(0.88, 0.1, 0.02))
+    dataset.load_dataset(split=DATASET_SPLIT)
     print("Loaded and processed dataset.")
 
     # Save to avoid repeating processing

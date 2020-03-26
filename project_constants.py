@@ -89,10 +89,12 @@ DATASET_INFO_PATH = "data/dataset_info.pt"
 DATASET_TAG_INFO_PATH = "data/dataset_tag_info.pt"
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
+DATASET_SPLIT = (0.88, 0.1, 0.02)
 
 # Choose which experimental model to test with
 _MODEL_TO_USE = 7
 
+# Choose parameters based on model
 STATE_DICT_PATH = _state_dict_hyperparameters[_MODEL_TO_USE]["STATE_DICT_PATH"]
 
 MODEL_HIDDEN_SIZE = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_HIDDEN_SIZE"]

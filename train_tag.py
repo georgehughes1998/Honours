@@ -45,6 +45,7 @@ try:
 # Load data and process it from the raw data file
 except FileNotFoundError:
     print("Run extract structure.py to generate the dataset.")
+    sys.exit(-1)
 
 # Display some details about the tagged dataset
 print("Vocab size:", dataset.vocab_size)

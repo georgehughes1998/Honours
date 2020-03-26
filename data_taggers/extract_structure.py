@@ -3,10 +3,12 @@ import string
 from random import sample
 
 from libs.data_manager import DatasetManager, ALL_DATA
-from project_constants import DATASET_INFO_PATH, DATASET_FILE_PATHS
+from libs.data_manager_tag import DatasetManagerTag
+from project_constants import DATASET_INFO_PATH, DATASET_TAG_INFO_PATH, DATASET_FILE_PATHS
 
 DATASET_INFO_PATH = "../" + DATASET_INFO_PATH
 
+MAX_NUMBER_SECTIONS = 5
 
 
 def get_struct(piece):
@@ -15,7 +17,8 @@ def get_struct(piece):
     orig_piece = piece
     piece = iter(piece)
 
-    section_letter = iter(string.ascii_uppercase)
+    # Only use pieces which go up to Nth section
+    section_letter = iter(string.ascii_uppercase[:MAX_NUMBER_SECTIONS])
 
     bars = []
     last_bar = []
@@ -105,7 +108,7 @@ def get_struct(piece):
 
     result_piece = []
     for s in sections:
-        named_sections[next(section_letter)] = s
+        named_sections[next(section_letter)] = s[0]
 
         result_piece += s[0]
 
@@ -163,3 +166,6 @@ print("{} failures. That is {}% of the dataset.".format(failure_count, 100*failu
 
 for sec in sample(sections_list, 3):
     print(sec)
+
+dataset_tag = DatasetManagerTag()
+dataset_tag.load_dataset(sections_list)

@@ -10,14 +10,14 @@ _DATA_PARTITIONS = [TRAINING_DATA, VALIDATION_DATA, TESTING_DATA]
 
 # Turn a piece with sections into a normal piece
 def compile_piece(piece, sig_symbol):
-    sig = piece.pop(sig_symbol)
-    result_piece = sig
+    sig = piece[sig_symbol]
+    result_piece = sig[:]
     result_tags = [sig_symbol]*2
 
     for section in piece:
-        result_piece += piece[section]
-        result_tags += [section] * len(piece[section])
-
+        if section != sig_symbol:
+            result_piece += piece[section]
+            result_tags += [section] * len(piece[section])
     return result_piece, result_tags
 
 
@@ -55,14 +55,6 @@ class DatasetManagerTag:
 
         self._split_char = " "
 
-    # def get_cleaned_data(self, partition=TRAINING_DATA):
-    #     if partition == ALL_DATA:
-    #         return self._partitioned_data[TRAINING_DATA] + \
-    #                self._partitioned_data[VALIDATION_DATA] + \
-    #                self._partitioned_data[TESTING_DATA]
-    #     else:
-    #         return self._partitioned_data[partition]
-
     def get_tensors_data(self, partition=TRAINING_DATA):
         # TODO: Amend
         return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]
@@ -80,12 +72,15 @@ class DatasetManagerTag:
     def load(self):
         obj_dictionary = torch.load(self._save_path)
 
-        # self.file_paths = obj_dictionary['file_paths']
-
         self.vocab = obj_dictionary['vocab']
         self.vocab_size = obj_dictionary['vocab_size']
         self.ix_to_vocab = obj_dictionary['ix_to_vocab']
         self.vocab_to_ix = obj_dictionary['vocab_to_ix']
+
+        self.tag_vocab = obj_dictionary['tag_vocab']
+        self.tag_vocab_size = obj_dictionary['tag_vocab_size']
+        self.ix_to_tag = obj_dictionary['ix_to_tag']
+        self.tag_to_ix = obj_dictionary['tag_to_ix']
 
         self.max_sentence_len = obj_dictionary['max_sentence_len']
         self.dataset_size = obj_dictionary['dataset_size']
@@ -126,12 +121,15 @@ class DatasetManagerTag:
     def _generate_object_dict(self):
         obj_dictionary = dict()
 
-        # obj_dictionary['file_paths'] = self.file_paths
-
         obj_dictionary['vocab'] = self.vocab
         obj_dictionary['vocab_size'] = self.vocab_size
         obj_dictionary['ix_to_vocab'] = self.ix_to_vocab
         obj_dictionary['vocab_to_ix'] = self.vocab_to_ix
+
+        obj_dictionary['tag_vocab'] = self.tag_vocab
+        obj_dictionary['tag_vocab_size'] = self.tag_vocab_size
+        obj_dictionary['ix_to_tag'] = self.ix_to_tag
+        obj_dictionary['tag_to_ix'] = self.tag_to_ix
 
         obj_dictionary['max_sentence_len'] = self.max_sentence_len
         obj_dictionary['dataset_size'] = self.dataset_size
@@ -149,8 +147,6 @@ class DatasetManagerTag:
         return torch.tensor([self.tag_to_ix[c] for c in the_tags], dtype=torch.long)
 
     def _load_data_from_sections_list(self, sections_list, split):
-        # TODO: Test
-
         total_dataset_size = len(sections_list)
 
         # Store data in partitions
@@ -191,8 +187,6 @@ class DatasetManagerTag:
 
     # Add padding to lines in the data so each line is the same length and add start/end symbols
     def _pad_data(self):
-        # TODO: Fix
-
         self.max_sentence_len = 0
         # For each partition
         for d in _DATA_PARTITIONS:
@@ -201,19 +195,18 @@ class DatasetManagerTag:
             # For each piece
             for piece in self._partitioned_data[d]:
                 notes, tags = compile_piece(piece, self._sig_symbol)
+
                 notes = [self._start_symbol] + notes + [self._end_symbol]
                 tags = [self._start_symbol] + tags + [self._end_symbol]
 
                 if len(notes) != len(tags):
+                    # print(len(notes))
+                    # print(len(tags))
                     raise(Exception("Length of notes and tags should be equal. Something has gone horribly wrong."))
 
                 self._padded_data[d].append((notes, tags))
 
                 self.max_sentence_len = max(self.max_sentence_len, len(notes))
-
-            # self._padded_data[d] = [[self._start_symbol] + s + [self._end_symbol] for s in self._partitioned_data[d]]
-
-            # self.max_sentence_len = max([len(s) for s in self._padded_data[d][0]] + [self.max_sentence_len])
 
         for d in _DATA_PARTITIONS:
             # Comprehension to pad both the piece and tags

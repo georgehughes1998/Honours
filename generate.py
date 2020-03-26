@@ -60,7 +60,7 @@ rnn.eval()
 
 # Load state dict
 try:
-    state_dict, epoch, batch, best_loss = load_state_dict(device)
+    state_dict, epoch, batch, best_loss = load_state_dict(device, STATE_DICT_PATH)
     rnn.load_state_dict(state_dict)
 
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))

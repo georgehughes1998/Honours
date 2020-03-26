@@ -6,8 +6,8 @@ from project_constants import STATE_DICT_PATH
 
 
 # Function to load the trained model state from a file
-def load_state_dict(device):
-    state_dict_info = torch.load(STATE_DICT_PATH, map_location=device)
+def load_state_dict(device, state_dict_path):
+    state_dict_info = torch.load(state_dict_path, map_location=device)
     state_dict = state_dict_info['state_dict']
     epoch = state_dict_info['epoch']
     batch = state_dict_info['batch']
@@ -17,14 +17,14 @@ def load_state_dict(device):
 
 
 # Function to save the trained model state to a file
-def save_state_dict(state_dict, epoch, batch, loss):
+def save_state_dict(state_dict, state_dict_path, epoch, batch, loss):
     state_dict_info = dict()
     state_dict_info['state_dict'] = state_dict
     state_dict_info['epoch'] = epoch
     state_dict_info['batch'] = batch
     state_dict_info['loss'] = loss
 
-    torch.save(state_dict_info, STATE_DICT_PATH)
+    torch.save(state_dict_info, state_dict_path)
 
 
 class RNN(nn.Module):
@@ -112,9 +112,8 @@ class MultiTaskRNN(nn.Module):
         for L in range(num_decode_layers-1):
             layer = nn.Linear(hidden_size, hidden_size)
             self.decode_tag.append(layer)
-        layer = nn.Linear(hidden_size, vocab_size)
+        layer = nn.Linear(hidden_size, tagset_size)
         self.decode_tag.append(layer)
-        self.decode_tag = nn.Linear(hidden_size, tagset_size)
 
         self.softmax = nn.LogSoftmax(dim=-1)
 

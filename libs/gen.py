@@ -16,6 +16,10 @@ def predict_next_word(model, dataset, prompt, return_ix=False, return_distributi
     input = dataset.get_tensor_from_string(prompt).to(device)
     output = model(input)
 
+    # MultiTask case
+    if isinstance(output, tuple):
+        output = output[0]
+
     # Return a probability distribution for the vocabulary
     if return_distribution:
         probabilities = torch.exp(output[-1].view(-1))

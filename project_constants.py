@@ -1,106 +1,31 @@
+from libs.experiments import state_dict_hyperparameters, state_dict_hyperparameters_multi
 
-# Some experimental models with different hyperparameters
-_state_dict_hyperparameters = {
-
-    # Calculated perplexity: 5.440979859545349
-    0: {"STATE_DICT_PATH": "model/state_dict_00.pt",
-        "MODEL_HIDDEN_SIZE": 64,
-        "MODEL_EMBEDDING_SIZE": 64,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.3,
-        "MODEL_LSTM_DROPOUT": 0.5,
-        "MODEL_NUM_HIDDEN_LAYERS": 1
-        },
-
-    # Calculated perplexity: 6.267296195073176
-    1: {"STATE_DICT_PATH": "model/state_dict_01.pt",
-        "MODEL_HIDDEN_SIZE": 32,
-        "MODEL_EMBEDDING_SIZE": 32,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.3,
-        "MODEL_LSTM_DROPOUT": 0.5,
-        "MODEL_NUM_HIDDEN_LAYERS": 1
-        },
-
-    # Calculated perplexity: 4.8019283890479985
-    2: {"STATE_DICT_PATH": "model/state_dict_02.pt",
-        "MODEL_HIDDEN_SIZE": 128,
-        "MODEL_EMBEDDING_SIZE": 128,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.3,
-        "MODEL_LSTM_DROPOUT": 0.5,
-        "MODEL_NUM_HIDDEN_LAYERS": 1
-        },
-
-    # Calculated perplexity: 6.159301027090821
-    3: {"STATE_DICT_PATH": "model/state_dict_03.pt",
-        "MODEL_HIDDEN_SIZE": 64,
-        "MODEL_EMBEDDING_SIZE": 64,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.3,
-        "MODEL_LSTM_DROPOUT": 0.5,
-        "MODEL_NUM_HIDDEN_LAYERS": 2
-        },
-
-    # Calculated perplexity: 5.414186633376884
-    4: {"STATE_DICT_PATH": "model/state_dict_04.pt",
-        "MODEL_HIDDEN_SIZE": 128,
-        "MODEL_EMBEDDING_SIZE": 128,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.6,
-        "MODEL_LSTM_DROPOUT": 0.7,
-        "MODEL_NUM_HIDDEN_LAYERS": 1
-        },
-
-    # Calculated perplexity: 4.5686740477528796
-    5: {"STATE_DICT_PATH": "model/state_dict_05.pt",
-        "MODEL_HIDDEN_SIZE": 128,
-        "MODEL_EMBEDDING_SIZE": 128,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.1,
-        "MODEL_LSTM_DROPOUT": 0.2,
-        "MODEL_NUM_HIDDEN_LAYERS": 1
-        },
-
-    # Calculated perplexity: 4.745441007895771
-    6: {"STATE_DICT_PATH": "model/state_dict_06.pt",
-        "MODEL_HIDDEN_SIZE": 128,
-        "MODEL_EMBEDDING_SIZE": 128,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.1,
-        "MODEL_LSTM_DROPOUT": 0.2,
-        "MODEL_NUM_HIDDEN_LAYERS": 2
-        },
-
-    # Calculated perplexity: 4.415783155239483
-    7: {"STATE_DICT_PATH": "model/state_dict_07.pt",
-        "MODEL_HIDDEN_SIZE": 256,
-        "MODEL_EMBEDDING_SIZE": 256,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.1,
-        "MODEL_LSTM_DROPOUT": 0.2,
-        "MODEL_NUM_HIDDEN_LAYERS": 1
-        },
-
-    # Calculated perplexity: 4.671028831548884
-    8: {"STATE_DICT_PATH": "model/state_dict_08.pt",
-        "MODEL_HIDDEN_SIZE": 256,
-        "MODEL_EMBEDDING_SIZE": 256,
-        "MODEL_EMBEDDINGS_DROPOUT": 0.1,
-        "MODEL_LSTM_DROPOUT": 0.2,
-        "MODEL_NUM_HIDDEN_LAYERS": 2
-        },
-}
-
-
+# File paths
 DATASET_INFO_PATH = "data/dataset_info.pt"
 DATASET_TAG_INFO_PATH = "data/dataset_tag_info.pt"
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
+# Split percentages for dataset partitions
 DATASET_SPLIT = (0.88, 0.1, 0.02)
 
-# Choose which experimental model to test with
+# Choose which experimental models to test with
 _MODEL_TO_USE = 7
+_MODEL_TO_USE_MULTI = 0
+
 
 # Choose parameters based on model
-STATE_DICT_PATH = _state_dict_hyperparameters[_MODEL_TO_USE]["STATE_DICT_PATH"]
+STATE_DICT_PATH = state_dict_hyperparameters[_MODEL_TO_USE]["STATE_DICT_PATH"]
+MODEL_HIDDEN_SIZE = state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_HIDDEN_SIZE"]
+MODEL_EMBEDDING_SIZE = state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_EMBEDDING_SIZE"]
+MODEL_EMBEDDINGS_DROPOUT = state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_EMBEDDINGS_DROPOUT"]
+MODEL_LSTM_DROPOUT = state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_LSTM_DROPOUT"]
+MODEL_NUM_HIDDEN_LAYERS = state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_NUM_HIDDEN_LAYERS"]
 
-MODEL_HIDDEN_SIZE = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_HIDDEN_SIZE"]
-MODEL_EMBEDDING_SIZE = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_EMBEDDING_SIZE"]
-MODEL_EMBEDDINGS_DROPOUT = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_EMBEDDINGS_DROPOUT"]
-MODEL_LSTM_DROPOUT = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_LSTM_DROPOUT"]
-MODEL_NUM_HIDDEN_LAYERS = _state_dict_hyperparameters[_MODEL_TO_USE]["MODEL_NUM_HIDDEN_LAYERS"]
-
-
+# Same for multi-task
+STATE_DICT_PATH_MULTI = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["STATE_DICT_PATH"]
+MODEL_HIDDEN_SIZE_MULTI = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["MODEL_HIDDEN_SIZE"]
+MODEL_EMBEDDING_SIZE_MULTI = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["MODEL_EMBEDDING_SIZE"]
+MODEL_EMBEDDINGS_DROPOUT_MULTI = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["MODEL_EMBEDDINGS_DROPOUT"]
+MODEL_LSTM_DROPOUT_MULTI = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["MODEL_LSTM_DROPOUT"]
+MODEL_NUM_HIDDEN_LAYERS_MULTI = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["MODEL_NUM_HIDDEN_LAYERS"]
+STRUCTURE_TASK_WEIGHT = state_dict_hyperparameters_multi[_MODEL_TO_USE_MULTI]["STRUCTURE_TASK_WEIGHT"]

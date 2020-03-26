@@ -4,16 +4,16 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from numpy import mean
-from math import exp
 import sys, re, string
 
-from model import RNN, save_state_dict, load_state_dict
-from libs.data_manager import DatasetManager
+from libs.data_manager_tag import DatasetManagerTag, TRAINING_DATA
+from model import RNN, save_state_dict, load_state_dict, MultiTaskRNN
 from libs.gen import greedy_search
 from libs.train import LearningRate
 from project_constants import *
-from data_taggers.extract_structure import get_struct
+# from data_taggers.extract_structure import get_struct
 
+# TODO: Implement
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Device to use:", device)
@@ -36,66 +36,44 @@ PRINT_INTERVAL = 1
 GEN_TEXT_INTERVAL = 20
 
 
-# Function to run on the dataset lines to "clean" them
-def clean_func(dataset_lines):
-    # Remove lines of length 0
-    dataset_lines = [s for s in dataset_lines if len(s) > 0]
-    # Remove lines which store key, meter or title information
-    new_dataset_lines = []
-    for si in range(len(dataset_lines)-2):
-        if dataset_lines[si][0] == "T":
-            new_sentence = dataset_lines[si+1] + "\n " + dataset_lines[si+2] + "\n "
-            new_sentence += dataset_lines[si+3]
-            new_dataset_lines += [new_sentence]
-
-    dataset_lines = new_dataset_lines
-
-    return dataset_lines
-
-
-# Create a dataset manager object to store/load/save info about the dataset
-dataset = DatasetManager(save_path=DATASET_INFO_PATH,
-                         data_file_path=DATASET_FILE_PATHS,
-                         clean_func=clean_func)
+dataset = DatasetManagerTag(save_path=DATASET_TAG_INFO_PATH)
 
 # Load the dataset from the dataset info file
 try:
     dataset.load()
-    print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
+    print("Successfully loaded dataset information from {}.".format(DATASET_TAG_INFO_PATH))
 # Load data and process it from the raw data file
 except FileNotFoundError:
-    dataset.load_dataset(split=(0.88, 0.1, 0.02))
-    print("Loaded and processed dataset.")
+    print("Run extract structure.py to generate the dataset.")
 
-    # Save to avoid repeating processing
-    dataset.save()
-    print("Saved data set information to {}.".format(DATASET_INFO_PATH))
-
-# Display some details about the loaded dataset
+# Display some details about the tagged dataset
 print("Vocab size:", dataset.vocab_size)
+print("Tag vocab size:", dataset.tag_vocab_size)
 print("Sentence length:", dataset.max_sentence_len)
 print("Dataset size:", dataset.dataset_size)
 print()
 
-sections =
-
 # Turn the dataset into batches
-dataset_tensors_pairs = [[s[:-1], s[1:]] for s in dataset.get_tensors_data()]
+dataset_tensors_pairs = [[tune[:-1], (tune[1:], tags[:-1])]
+                         for (tune, tags) in dataset.get_tensors_data()]
 loader = DataLoader(dataset_tensors_pairs, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
 num_batches = dataset.get_dataset_size() // BATCH_SIZE
 
+
 # Create an instance of the model with given hyperparameters
-rnn = RNN(dataset.vocab_size,
-          hidden_size=MODEL_HIDDEN_SIZE,
-          embedding_size=MODEL_EMBEDDING_SIZE,
-          embeddings_dropout=MODEL_EMBEDDINGS_DROPOUT,
-          lstm_dropout=MODEL_LSTM_DROPOUT,
-          num_decode_layers=MODEL_NUM_HIDDEN_LAYERS)
+rnn = MultiTaskRNN(dataset.vocab_size,
+                   dataset.tag_vocab_size,
+                   hidden_size=MODEL_HIDDEN_SIZE_MULTI,
+                   embedding_size=MODEL_EMBEDDING_SIZE_MULTI,
+                   embeddings_dropout=MODEL_EMBEDDINGS_DROPOUT_MULTI,
+                   lstm_dropout=MODEL_LSTM_DROPOUT_MULTI,
+                   num_decode_layers=MODEL_NUM_HIDDEN_LAYERS_MULTI)
 rnn.to(device)
 
 # Load state dict
 try:
-    state_dict, epoch, batch, best_loss = load_state_dict(device)
+    state_dict, epoch, batch, best_loss = load_state_dict(device, state_dict_path=STATE_DICT_PATH_MULTI)
+    print(epoch)
     rnn.load_state_dict(state_dict)
 
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
@@ -133,21 +111,28 @@ loss_arr = []
 # Main training loop
 while True:
 
-    for input, target in loader:
+    for input, (target, target_tags) in loader:
 
         optimiser.zero_grad()
 
         input = input.permute(1, 0).to(device)
+
         target = target.permute(1, 0).to(device)
+        target_tags = target_tags.permute(1, 0).to(device)
 
-        output = rnn(input, batch_size=BATCH_SIZE)
+        output, output_tags = rnn(input, batch_size=BATCH_SIZE)
+
         output = output.permute(0, 2, 1)
+        output_tags = output_tags.permute(0, 2, 1)
 
-        # print(input.shape)
-        # print(target.shape)
-        # print(output.shape)
+        # print("Input shape:", input.shape)
+        # print("Target shape:", target.shape)
+        # print("Output shape:", output.shape)
+        # print("Target tags shape:", target_tags.shape)
+        # print("Output tags shape:", output_tags.shape)
 
         loss = criterion(output, target)
+        loss += STRUCTURE_TASK_WEIGHT*criterion(output_tags, target_tags)
 
         loss.backward()
         optimiser.step()
@@ -170,7 +155,7 @@ while True:
         # Save the model
         if avg_loss < best_loss and len(loss_arr) > SAVE_LOSS_MIN:
             best_loss = avg_loss
-            save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
+            save_state_dict(rnn.state_dict(), STATE_DICT_PATH_MULTI, epoch, batch, avg_loss)
 
             lr.model_was_saved(epoch)
 

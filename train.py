@@ -91,7 +91,7 @@ rnn.to(device)
 
 # Load state dict
 try:
-    state_dict, epoch, batch, best_loss = load_state_dict(device)
+    state_dict, epoch, batch, best_loss = load_state_dict(device, STATE_DICT_PATH)
     rnn.load_state_dict(state_dict)
 
     print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
@@ -166,7 +166,7 @@ while True:
         # Save the model
         if avg_loss < best_loss and len(loss_arr) > SAVE_LOSS_MIN:
             best_loss = avg_loss
-            save_state_dict(rnn.state_dict(), epoch, batch, avg_loss)
+            save_state_dict(rnn.state_dict(), STATE_DICT_PATH, epoch, batch, avg_loss)
 
             lr.model_was_saved(epoch)
 

@@ -165,7 +165,7 @@ class DatasetManagerTag:
     # Gather information about vocab used in the dataset
     def _extract_vocab_from_data(self, sections_list):
         vocab = {self._pad_symbol, self._start_symbol, self._end_symbol}
-        tag_vocab = {self._pad_symbol, self._no_tag_symbol}
+        tag_vocab = {self._pad_symbol, self._start_symbol, self._end_symbol, self._no_tag_symbol}
 
         for piece in sections_list:
             for section in piece:

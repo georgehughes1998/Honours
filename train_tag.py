@@ -132,8 +132,7 @@ while True:
         # print("Target tags shape:", target_tags.shape)
         # print("Output tags shape:", output_tags.shape)
 
-        loss = criterion(output, target)
-        loss += STRUCTURE_TASK_WEIGHT*criterion(output_tags, target_tags)
+        loss = criterion(output, target) + STRUCTURE_TASK_WEIGHT*criterion(output_tags, target_tags)
 
         loss.backward()
         optimiser.step()

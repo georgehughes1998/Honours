@@ -1,5 +1,6 @@
 import sys
 import string
+from os import path
 from random import sample
 
 from libs.data_manager import DatasetManager, ALL_DATA
@@ -173,11 +174,29 @@ for p in pieces[:]:
     c += 1
 
 print("{} failures. That is {}% of the dataset.".format(failure_count, round(100*failure_count/length,2)))
+print()
 
-
+print("Some samples:")
 for sec in sample(sections_list, 3):
     print(sec)
+print()
 
+if path.exists(DATASET_TAG_INFO_PATH):
+    if input("The dataset already exists. Rewriting may cause issues. Proceed? (yes/no)") == "yes":
+        dataset_tag.load_dataset(sections_list, split=DATASET_SPLIT)
+        dataset_tag.save()
+else:
+    dataset_tag.load_dataset(sections_list, split=DATASET_SPLIT)
+    dataset_tag.save()
 
-dataset_tag.load_dataset(sections_list, split=DATASET_SPLIT)
-dataset_tag.save()
+dataset_tag.load()
+
+# Display some details about the tagged dataset
+print("Vocab size:", dataset_tag.vocab_size)
+print("Tag vocab size:", dataset_tag.tag_vocab_size)
+print("Sentence length:", dataset_tag.max_sentence_len)
+print("Dataset size:", dataset_tag.dataset_size)
+print()
+
+tensors = dataset.get_tensors_data()
+print(tensors)

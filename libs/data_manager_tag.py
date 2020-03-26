@@ -56,8 +56,9 @@ class DatasetManagerTag:
         self._split_char = " "
 
     def get_tensors_data(self, partition=TRAINING_DATA):
-        # TODO: Amend
-        return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]
+        # TODO: Test
+        return [(self.get_tensor_from_string(tune),  self.get_tensor_from_tags(tags))
+                for (tune, tags) in self._padded_data[partition]]
 
     def get_dataset_size(self, partition=TRAINING_DATA):
         if partition == ALL_DATA:

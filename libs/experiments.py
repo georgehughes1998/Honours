@@ -95,4 +95,14 @@ state_dict_hyperparameters_multi = {
         "MODEL_NUM_HIDDEN_LAYERS": 1,
         "STRUCTURE_TASK_WEIGHT": 1
         },
+
+    # Calculated perplexity:
+    1: {"STATE_DICT_PATH": "model/state_dict_multi_01.pt",
+        "MODEL_HIDDEN_SIZE": 256,
+        "MODEL_EMBEDDING_SIZE": 256,
+        "MODEL_EMBEDDINGS_DROPOUT": 0.1,
+        "MODEL_LSTM_DROPOUT": 0.2,
+        "MODEL_NUM_HIDDEN_LAYERS": 1,
+        "STRUCTURE_TASK_WEIGHT": 5
+        },
 }

@@ -11,7 +11,7 @@ from project_constants import *
 USE_MULTI_TASK = True
 
 NUM_SAMPLE_TO_GENERATE = 20
-MAX_GEN_LENGTH = 200
+MAX_GEN_LENGTH = 400
 
 OUTPUT_PATH = "output/"
 ABC_PATH = OUTPUT_PATH + "abc/"

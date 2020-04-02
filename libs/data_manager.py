@@ -62,6 +62,11 @@ class DatasetManager:
     def get_tensors_data(self, partition=TRAINING_DATA):
         return [self.get_tensor_from_string(s) for s in self._padded_data[partition]]
 
+    # Set the data stored in the select partition to be any passed data
+    def set_data(self, new_data, partition=TRAINING_DATA):
+        self._padded_data[partition] = new_data
+        self.dataset_size[partition] = len(new_data)
+
     def get_dataset_size(self, partition=TRAINING_DATA):
         if partition == ALL_DATA:
             return sum(self.dataset_size.values())

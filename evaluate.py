@@ -7,7 +7,7 @@ from libs.data_manager import DatasetManager, VALIDATION_DATA
 from libs.eval import calculate_perplexity
 from project_constants import *
 
-USE_MULTI_TASK = True
+USE_MULTI_TASK = False
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -70,6 +70,12 @@ except FileNotFoundError:
     sys.exit(1)
 print()
 
+# Use the cut down data to evaluate
+if not USE_MULTI_TASK:
+    tag_dataset = DatasetManagerTag(save_path=DATASET_TAG_INFO_PATH)
+    tag_dataset.load()
+    new_data = tag_dataset.get_data(partition=VALIDATION_DATA, include_tags=False)
+    dataset.set_data(new_data, partition=VALIDATION_DATA)
 
 validation_data = dataset.get_tensors_data(partition=VALIDATION_DATA)
 pad_ix = dataset.get_pad_ix()

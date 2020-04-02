@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from numpy import mean
 import sys, re, string
 
+from libs.data_manager_tag import DatasetManagerTag
 from model import RNN, save_state_dict, load_state_dict
 from libs.data_manager import DatasetManager
 from libs.gen import greedy_search
@@ -33,6 +34,7 @@ TRAINING_PROMPT_LENGTH = 10
 PRINT_INTERVAL = 1
 GEN_TEXT_INTERVAL = 20
 
+USE_CUT_DOWN_DATA = True
 
 # Function to run on the dataset lines to "clean" them
 def clean_func(dataset_lines):
@@ -60,6 +62,14 @@ dataset = DatasetManager(save_path=DATASET_INFO_PATH,
 try:
     dataset.load()
     print("Successfully loaded dataset information from {}.".format(DATASET_INFO_PATH))
+
+    # Use the cut down data to train on
+    if USE_CUT_DOWN_DATA:
+        tag_dataset = DatasetManagerTag(save_path=DATASET_TAG_INFO_PATH)
+        tag_dataset.load()
+        new_data = tag_dataset.get_data(include_tags=False)
+        dataset.set_data(new_data)
+
 # Load data and process it from the raw data file
 except FileNotFoundError:
     dataset.load_dataset(split=DATASET_SPLIT)

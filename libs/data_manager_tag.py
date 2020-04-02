@@ -59,6 +59,14 @@ class DatasetManagerTag:
         return [(self.get_tensor_from_string(tune),  self.get_tensor_from_tags(tags))
                 for (tune, tags) in self._padded_data[partition]]
 
+    # Get a copy of the strings of data for a partition
+    def get_data(self, partition=TRAINING_DATA, include_tags=True):
+        if include_tags:
+            ret_val = [x for x in self._padded_data[partition]]
+        else:
+            ret_val = [tune for (tune, tags) in self._padded_data[partition]]
+        return ret_val
+
     def get_dataset_size(self, partition=TRAINING_DATA):
         if partition == ALL_DATA:
             return sum(self.dataset_size.values())

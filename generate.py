@@ -8,7 +8,7 @@ from libs.gen import random_sample, greedy_search
 from abc2midi import write_abc_file, generate_midi_file, generate_ext_file
 from project_constants import *
 
-USE_MULTI_TASK = True
+USE_MULTI_TASK = False
 
 NUM_SAMPLE_TO_GENERATE = 20
 MAX_GEN_LENGTH = 400

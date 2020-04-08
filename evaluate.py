@@ -7,7 +7,7 @@ from libs.data_manager import DatasetManager, VALIDATION_DATA
 from libs.eval import calculate_perplexity
 from project_constants import *
 
-USE_MULTI_TASK = True
+USE_MULTI_TASK = False
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

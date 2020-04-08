@@ -21,7 +21,7 @@ print()
 DATASET_FILE_PATHS = ["data/allabcwrepeats_parsed.txt"]
 
 # Starting learning rate (should be fairly high)
-LEARNING_RATE = 1
+LEARNING_RATE = 4
 
 BATCH_SIZE = 32
 

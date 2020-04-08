@@ -172,8 +172,8 @@ state_dict_hyperparameters_multi = {
         "STRUCTURE_TASK_WEIGHT": 0
         },
 
-    # Calculated perplexity:
-    # Calculated perplexity for tags:
+    # Calculated perplexity: 4.312212959622073
+    # Calculated perplexity for tags: 2.0742064022972406
     7: {"STATE_DICT_PATH": "model/state_dict_multi_07.pt",
         "MODEL_HIDDEN_SIZE": 256,
         "MODEL_EMBEDDING_SIZE": 256,

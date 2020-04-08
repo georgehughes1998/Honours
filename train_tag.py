@@ -77,7 +77,7 @@ try:
     print(epoch)
     rnn.load_state_dict(state_dict)
 
-    print("Successfully loaded model state from {}.".format(STATE_DICT_PATH))
+    print("Successfully loaded model state from {}.".format(STATE_DICT_PATH_MULTI))
     print("Picking up at epoch {}, batch {}.".format(epoch, batch))
     print("Best recorded loss was {}.".format(best_loss))
 # Initialise counters if model state can't be loaded

@@ -90,6 +90,15 @@ state_dict_hyperparameters = {
         "MODEL_LSTM_DROPOUT": 0,
         "MODEL_NUM_HIDDEN_LAYERS": 1
         },
+
+    # Calculated perplexity:
+    10: {"STATE_DICT_PATH": "model/state_dict_10.pt",
+         "MODEL_HIDDEN_SIZE": 512,
+         "MODEL_EMBEDDING_SIZE": 512,
+         "MODEL_EMBEDDINGS_DROPOUT": 0.3,
+         "MODEL_LSTM_DROPOUT": 0.5,
+         "MODEL_NUM_HIDDEN_LAYERS": 1
+        },
 }
 
 

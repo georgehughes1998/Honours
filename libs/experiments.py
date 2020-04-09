@@ -192,8 +192,8 @@ state_dict_hyperparameters_multi = {
         "STRUCTURE_TASK_WEIGHT": 0.05
         },
 
-    # Calculated perplexity:
-    # Calculated perplexity for tags:
+    # Calculated perplexity: 4.253170632171199
+    # Calculated perplexity for tags: 2.9898213275397127
     8: {"STATE_DICT_PATH": "model/state_dict_multi_08.pt",
         "MODEL_HIDDEN_SIZE": 256,
         "MODEL_EMBEDDING_SIZE": 256,
@@ -202,4 +202,37 @@ state_dict_hyperparameters_multi = {
         "MODEL_NUM_HIDDEN_LAYERS": 1,
         "STRUCTURE_TASK_WEIGHT": 0.005
         },
+
+    # Calculated perplexity:
+    # Calculated perplexity for tags:
+    9: {"STATE_DICT_PATH": "model/state_dict_multi_09.pt",
+        "MODEL_HIDDEN_SIZE": 256,
+        "MODEL_EMBEDDING_SIZE": 256,
+        "MODEL_EMBEDDINGS_DROPOUT": 0.1,
+        "MODEL_LSTM_DROPOUT": 0.2,
+        "MODEL_NUM_HIDDEN_LAYERS": 1,
+        "STRUCTURE_TASK_WEIGHT": 0.005
+        },
+
+    # Calculated perplexity:
+    # Calculated perplexity for tags:
+    10: {"STATE_DICT_PATH": "model/state_dict_multi_10.pt",
+        "MODEL_HIDDEN_SIZE": 256,
+        "MODEL_EMBEDDING_SIZE": 256,
+        "MODEL_EMBEDDINGS_DROPOUT": 0,
+        "MODEL_LSTM_DROPOUT": 0,
+        "MODEL_NUM_HIDDEN_LAYERS": 1,
+        "STRUCTURE_TASK_WEIGHT": 0.0005
+        },
+
+    # Calculated perplexity:
+    # Calculated perplexity for tags:
+    11: {"STATE_DICT_PATH": "model/state_dict_multi_11.pt",
+         "MODEL_HIDDEN_SIZE": 256,
+         "MODEL_EMBEDDING_SIZE": 256,
+         "MODEL_EMBEDDINGS_DROPOUT": 0.1,
+         "MODEL_LSTM_DROPOUT": 0.2,
+         "MODEL_NUM_HIDDEN_LAYERS": 1,
+         "STRUCTURE_TASK_WEIGHT": 0.0005
+         },
 }

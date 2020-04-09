@@ -10,7 +10,7 @@ DATASET_SPLIT = (0.88, 0.1, 0.02)
 
 # Choose which experimental models to test with
 _MODEL_TO_USE = 10
-_MODEL_TO_USE_MULTI = 8
+_MODEL_TO_USE_MULTI = 9
 
 
 # Choose parameters based on model
